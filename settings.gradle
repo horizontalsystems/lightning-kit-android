@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':lightningkit'
 rootProject.name='Lightning Kit'
