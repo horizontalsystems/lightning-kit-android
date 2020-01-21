@@ -5,9 +5,8 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.demo.core.SingleLiveEvent
 
-class GuestViewModel : ViewModel() {
-    val openRemoteConnectionLiveEvent =
-        SingleLiveEvent<Void>()
+class GuestPresenter : ViewModel() {
+    val openRemoteConnectionLiveEvent = SingleLiveEvent<Void>()
 
     fun create(view: View) {
         Log.e("AAA", "creating...")

@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="io.horizontalsystems.lightningkit.demo.RemoteConnectionViewModel" />
+            type="io.horizontalsystems.lightningkit.demo.remoteconnection.RemoteConnectionPresenter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
