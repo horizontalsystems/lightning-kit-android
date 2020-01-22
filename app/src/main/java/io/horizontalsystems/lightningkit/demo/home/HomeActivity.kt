@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import io.horizontalsystems.lightningkit.demo.R
 import io.horizontalsystems.lightningkit.demo.send.SendActivity
 
@@ -17,11 +16,12 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val channelsAdapter = ChannelsAdapter()
+        val homeFragmentsAdapter = HomeFragmentsAdapter(supportFragmentManager)
+        val viewPager = findViewById<ViewPager>(R.id.pager)
+        viewPager.adapter = homeFragmentsAdapter
 
-        val rvChannels = findViewById<RecyclerView>(R.id.channels)
-        rvChannels.adapter = channelsAdapter
-
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
+        tabLayout.setupWithViewPager(viewPager)
         val sendButton = findViewById<Button>(R.id.button)
         sendButton.setOnClickListener(View.OnClickListener() {
             val intent = Intent(this, SendActivity::class.java)

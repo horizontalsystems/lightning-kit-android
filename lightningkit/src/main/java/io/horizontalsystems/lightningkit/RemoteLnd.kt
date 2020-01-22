@@ -36,4 +36,10 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         val request = requestBuilder.build()
         return Single.create<SendResponse> { asyncStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
     }
+
+    override fun listPayments(): Single<ListPaymentsResponse> {
+        val request = ListPaymentsRequest.newBuilder().build()
+
+        return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
+    }
 }
