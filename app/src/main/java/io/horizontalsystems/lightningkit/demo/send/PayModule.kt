@@ -3,7 +3,7 @@ package io.horizontalsystems.lightningkit.demo.send
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-object SendModule {
+object PayModule {
     interface IInteractor {
         fun payToInvoice(invoice: String)
         fun clear()
@@ -14,8 +14,8 @@ object SendModule {
 
     class Factory : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            val interactor = SendInteractor()
-            val presenter = SendPresenter(interactor)
+            val interactor = PayInteractor()
+            val presenter = PayPresenter(interactor)
 
             interactor.delegate = presenter
 

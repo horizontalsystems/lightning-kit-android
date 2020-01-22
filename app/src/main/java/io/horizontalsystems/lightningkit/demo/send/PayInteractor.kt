@@ -4,17 +4,17 @@ import android.util.Log
 import io.horizontalsystems.lightningkit.demo.core.App
 import io.reactivex.disposables.CompositeDisposable
 
-class SendInteractor() : SendModule.IInteractor {
-    lateinit var delegate: SendModule.IInteractorDelegate
+class PayInteractor() : PayModule.IInteractor {
+    lateinit var delegate: PayModule.IInteractorDelegate
     private val disposables = CompositeDisposable()
 
     override fun payToInvoice(invoice: String) {
-        Log.d("SEND", "Paying invoice $invoice")
+        Log.d("PAY", "Paying invoice $invoice")
         App.lightningKit.payInvoice(invoice)
             .subscribe({
-                Log.d("Send", "Payment Sent! ${it.paymentHash.toStringUtf8()}")
+                Log.d("PAY", "Payment Sent! ${it.paymentHash.toStringUtf8()}")
             }, {
-                Log.e("Send", "Payment send error: $it")
+                Log.e("PAY", "Payment send error: $it")
             })
             .let {
                 disposables.add(it)

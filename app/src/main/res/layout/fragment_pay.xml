@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="io.horizontalsystems.lightningkit.demo.send.SendPresenter" />
+            type="io.horizontalsystems.lightningkit.demo.send.PayPresenter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
+            android:id="@+id/invoiceInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -24,12 +24,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/invoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Invoice"
                 android:inputType="textMultiLine"
                 android:lines="3"
-                android:text="@={viewModel.invoice}" />
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -39,11 +40,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:onClick="@{viewModel::send}"
-            android:text="Send"
+            android:text="Pay"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/invoiceInputLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

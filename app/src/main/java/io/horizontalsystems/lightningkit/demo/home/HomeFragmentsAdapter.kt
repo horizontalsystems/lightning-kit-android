@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import io.horizontalsystems.lightningkit.demo.channels.ChannelsFragment
 import io.horizontalsystems.lightningkit.demo.payments.PaymentsFragment
+import io.horizontalsystems.lightningkit.demo.send.PayFragment
 
 class HomeFragmentsAdapter(fm: FragmentManager) :
     FragmentStatePagerAdapter(fm,
@@ -13,7 +14,8 @@ class HomeFragmentsAdapter(fm: FragmentManager) :
 
     private val fragments = arrayOf(
         Pair("Channels", { ChannelsFragment() }),
-        Pair("Payments", { PaymentsFragment() })
+        Pair("Payments", { PaymentsFragment() }),
+        Pair("Pay", { PayFragment() })
     )
 
     override fun getCount(): Int = fragments.size
