@@ -1,12 +1,17 @@
 package io.horizontalsystems.lightningkit
 
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
+import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
 import io.reactivex.Single
 
 class LightningKit(private val lndNode: ILndNode) {
 
     fun listChannels(): Single<ListChannelsResponse> {
         return lndNode.listChannels()
+    }
+
+    fun listPayments(): Single<ListPaymentsResponse> {
+        return lndNode.listPayments()
     }
 
     companion object {

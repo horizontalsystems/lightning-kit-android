@@ -28,4 +28,10 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
 
         return Single.create<ListChannelsResponse> { asyncStub.listChannels(request, StreamObserverToSingle(it)) }
     }
+
+    override fun listPayments(): Single<ListPaymentsResponse> {
+        val request = ListPaymentsRequest.newBuilder().build()
+
+        return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
+    }
 }

@@ -1,11 +1,11 @@
-package io.horizontalsystems.lightningkit.demo.home
+package io.horizontalsystems.lightningkit.demo.channels
 
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.LightningKit
 import io.reactivex.disposables.CompositeDisposable
 
-class HomeInteractor(private val lightningKit: LightningKit) : ViewModel(), HomeModule.IInteractor {
-    lateinit var delegate: HomeModule.IInteractorDelegate
+class ChannelsInteractor(private val lightningKit: LightningKit) : ViewModel(), ChannelsModule.IInteractor {
+    lateinit var delegate: ChannelsModule.IInteractorDelegate
 
     private val disposables = CompositeDisposable()
 
