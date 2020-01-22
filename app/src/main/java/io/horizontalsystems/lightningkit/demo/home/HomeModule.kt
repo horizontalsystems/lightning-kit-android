@@ -19,7 +19,6 @@ object HomeModule {
     class Factory : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             val interactor = HomeInteractor(App.lightningKit)
-
             val presenter = HomePresenter(interactor)
 
             interactor.delegate = presenter

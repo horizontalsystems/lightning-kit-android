@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.lightningnetwork.lnd.lnrpc.Channel
-import io.horizontalsystems.lightningkit.demo.R
 
 class ChannelsAdapter : RecyclerView.Adapter<ChannelViewHolder>() {
     private var channels: List<Channel> = listOf()
@@ -20,7 +19,7 @@ class ChannelsAdapter : RecyclerView.Adapter<ChannelViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.view_holder_channel, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(ChannelViewHolder.resId, parent, false)
         return ChannelViewHolder(itemView)
     }
 

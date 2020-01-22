@@ -7,9 +7,17 @@ import com.github.lightningnetwork.lnd.lnrpc.Channel
 import io.horizontalsystems.lightningkit.demo.R
 
 class ChannelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val channelPoint = itemView.findViewById<TextView>(R.id.channelPoint)
+    companion object {
+        const val resId = R.layout.view_holder_channel
+    }
+
+    private val id = itemView.findViewById<TextView>(R.id.idValue)
+    private val localBalance = itemView.findViewById<TextView>(R.id.localBalanceValue)
+    private val remoteBalance = itemView.findViewById<TextView>(R.id.remoteBalanceValue)
 
     fun bind(channel: Channel) {
-        channelPoint.text = channel.channelPoint
+        id.text = channel.chanId.toString()
+        localBalance.text = channel.localBalance.toString()
+        remoteBalance.text = channel.remoteBalance.toString()
     }
 }
