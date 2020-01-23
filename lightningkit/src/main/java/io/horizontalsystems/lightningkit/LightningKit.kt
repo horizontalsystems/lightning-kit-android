@@ -1,11 +1,16 @@
 package io.horizontalsystems.lightningkit
 
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
-import com.github.lightningnetwork.lnd.lnrpc.SendResponse
 import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
+import com.github.lightningnetwork.lnd.lnrpc.SendResponse
+import com.github.lightningnetwork.lnd.lnrpc.UnlockWalletResponse
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class LightningKit(private val lndNode: ILndNode) {
+
+    val statusObservable: Observable<ILndNode.Status>
+        get() = lndNode.statusObservable
 
     fun listChannels(): Single<ListChannelsResponse> {
         return lndNode.listChannels()
@@ -17,6 +22,10 @@ class LightningKit(private val lndNode: ILndNode) {
 
     fun listPayments(): Single<ListPaymentsResponse> {
         return lndNode.listPayments()
+    }
+
+    fun unlockWallet(password: String): Single<UnlockWalletResponse> {
+        return lndNode.unlockWallet(password)
     }
 
     companion object {
