@@ -33,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
                     unlockWallet()
                 }
 
-                Log.e("AAA", "Status updated to: ${it.name}")
+                Log.e("AAA", "Status updated to: ${it}")
             }, {
                 Log.e("AAA", "Error on status updated", it)
             })

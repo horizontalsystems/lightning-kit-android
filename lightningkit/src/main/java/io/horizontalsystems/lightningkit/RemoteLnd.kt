@@ -37,29 +37,10 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
     private val asyncWalletStub = WalletUnlockerGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
     private val disposables = CompositeDisposable()
 
-    init {
+    fun scheduleStatusUpdates() {
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap {
-                getInfo()
-                    .map {
-                        if (it.syncedToGraph) {
-                            ILndNode.Status.RUNNING
-                        } else {
-                            ILndNode.Status.SYNCING
-                        }
-                    }
-                    .onErrorResumeNext { throwable: Throwable ->
-                        val message = throwable.message ?: ""
-
-                        val status = if (message.toLowerCase(Locale.ENGLISH).contains("unimplemented")) {
-                            ILndNode.Status.LOCKED
-                        } else {
-                            ILndNode.Status.ERROR
-                        }
-
-                        Single.just(status)
-                    }
-                    .toObservable()
+                fetchStatus().toObservable()
             }
             .subscribe {
                 status = it
@@ -99,5 +80,38 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         val request = ListPaymentsRequest.newBuilder().build()
 
         return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
+    }
+
+    fun validateAsync(): Single<Unit> {
+        return fetchStatus()
+            .flatMap {
+                if (it is ILndNode.Status.ERROR) {
+                    Single.error(it.throwable)
+                } else {
+                    Single.just(Unit)
+                }
+            }
+    }
+
+    private fun fetchStatus(): Single<ILndNode.Status> {
+        return getInfo()
+            .map {
+                if (it.syncedToGraph) {
+                    ILndNode.Status.RUNNING
+                } else {
+                    ILndNode.Status.SYNCING
+                }
+            }
+            .onErrorResumeNext { throwable: Throwable ->
+                val message = throwable.message ?: ""
+
+                val status = if (message.toLowerCase(Locale.ENGLISH).contains("unimplemented")) {
+                    ILndNode.Status.LOCKED
+                } else {
+                    ILndNode.Status.ERROR(throwable)
+                }
+
+                Single.just(status)
+            }
     }
 }
