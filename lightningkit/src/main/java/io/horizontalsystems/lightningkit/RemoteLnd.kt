@@ -37,7 +37,7 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
     private val asyncWalletStub = WalletUnlockerGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
     private val disposables = CompositeDisposable()
 
-    init {
+    fun scheduleStatusUpdates() {
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
             .flatMap {
                 getInfo()
@@ -99,5 +99,20 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         val request = ListPaymentsRequest.newBuilder().build()
 
         return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
+    }
+
+    fun validateAsync(): Single<Unit> {
+        return getInfo()
+            .map { Unit }
+            .onErrorResumeNext { throwable: Throwable ->
+                val message = throwable.message ?: ""
+
+                if (message.toLowerCase(Locale.ENGLISH).contains("unimplemented")) {
+                    Single.just(Unit)
+                } else {
+                    Single.error(throwable)
+                }
+            }
+
     }
 }

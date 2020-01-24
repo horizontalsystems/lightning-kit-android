@@ -32,16 +32,13 @@ class LightningKit(private val lndNode: ILndNode) {
         fun validateRemoteConnection(host: String, port: Int, certificate: String, macaroon: String): Single<Unit> {
             val remoteLndNode = RemoteLnd(host, port, certificate, macaroon)
 
-            return remoteLndNode
-                .getInfo()
-                .map {
-                    Unit
-                }
-
+            return remoteLndNode.validateAsync()
         }
 
         fun remote(host: String, port: Int, certificate: String, macaroon: String): LightningKit {
             val remoteLndNode = RemoteLnd(host, port, certificate, macaroon)
+            remoteLndNode.scheduleStatusUpdates()
+
             return LightningKit(remoteLndNode)
         }
     }
