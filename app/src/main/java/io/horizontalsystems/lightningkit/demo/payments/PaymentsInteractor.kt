@@ -21,6 +21,16 @@ class PaymentsInteractor(private val lightningKit: LightningKit) : ViewModel(), 
             }
     }
 
+    override fun subscribeToStatusUpdates() {
+        lightningKit.statusObservable
+            .subscribe {
+                delegate.onStatusUpdate(it)
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
     // ViewModel
 
     override fun clear() {
