@@ -4,11 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.lightningnetwork.lnd.lnrpc.Channel
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
+import io.horizontalsystems.lightningkit.ILndNode
 
 class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : ViewModel(), ChannelsModule.IInteractorDelegate {
     val channels = MutableLiveData<List<Channel>>()
 
     fun onLoad() {
+        interactor.subscribeToStatusUpdates()
         interactor.listChannels()
     }
 
@@ -20,5 +22,9 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
 
     override fun onReceivedError(e: Throwable) {
 
+    }
+
+    override fun onStatusUpdate(status: ILndNode.Status) {
+        interactor.listChannels()
     }
 }

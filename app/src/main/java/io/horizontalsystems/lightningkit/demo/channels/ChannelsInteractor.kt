@@ -21,7 +21,15 @@ class ChannelsInteractor(private val lightningKit: LightningKit) : ViewModel(), 
             }
     }
 
-    // ViewModel
+    override fun subscribeToStatusUpdates() {
+        lightningKit.statusObservable
+            .subscribe {
+                delegate.onStatusUpdate(it)
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
 
     override fun clear() {
         disposables.clear()

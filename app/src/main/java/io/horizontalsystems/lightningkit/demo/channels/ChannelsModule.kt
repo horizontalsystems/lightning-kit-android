@@ -3,17 +3,20 @@ package io.horizontalsystems.lightningkit.demo.channels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
+import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.demo.core.App
 
 object ChannelsModule {
     interface IInteractor {
         fun listChannels()
+        fun subscribeToStatusUpdates()
         fun clear()
     }
 
     interface IInteractorDelegate {
         fun onReceiveChannels(info: ListChannelsResponse)
         fun onReceivedError(e: Throwable)
+        fun onStatusUpdate(status: ILndNode.Status)
     }
 
     class Factory : ViewModelProvider.Factory {
