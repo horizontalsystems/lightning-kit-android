@@ -23,4 +23,8 @@ class Storage(private val sharedPreferences: SharedPreferences) {
         }
     }
 
+    fun clearConnectionParams() {
+        sharedPreferences.edit().remove(KEY_CONNECTION_PARAMS).apply()
+    }
+
 }
