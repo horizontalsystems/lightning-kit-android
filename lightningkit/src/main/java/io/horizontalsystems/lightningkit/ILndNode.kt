@@ -10,6 +10,7 @@ interface ILndNode {
         object RUNNING: Status()
         object SYNCING: Status()
         object LOCKED: Status()
+        object UNLOCKING: Status()
         class ERROR(val throwable: Throwable) : Status() {
             override fun equals(other: Any?): Boolean {
                 return other is ERROR
@@ -27,5 +28,5 @@ interface ILndNode {
     fun listChannels(): Single<ListChannelsResponse>
     fun listPayments(): Single<ListPaymentsResponse>
     fun payInvoice(invoice: String): Single<SendResponse>
-    fun unlockWallet(password: String): Single<UnlockWalletResponse>
+    fun unlockWallet(password: String): Single<Unit>
 }

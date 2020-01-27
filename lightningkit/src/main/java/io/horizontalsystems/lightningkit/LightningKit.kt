@@ -3,7 +3,6 @@ package io.horizontalsystems.lightningkit
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
 import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
 import com.github.lightningnetwork.lnd.lnrpc.SendResponse
-import com.github.lightningnetwork.lnd.lnrpc.UnlockWalletResponse
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -24,7 +23,7 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.listPayments()
     }
 
-    fun unlockWallet(password: String): Single<UnlockWalletResponse> {
+    fun unlockWallet(password: String): Single<Unit> {
         return lndNode.unlockWallet(password)
     }
 

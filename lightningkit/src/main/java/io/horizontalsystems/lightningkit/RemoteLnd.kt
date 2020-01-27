@@ -2,7 +2,6 @@ package io.horizontalsystems.lightningkit
 
 import android.util.Base64
 import com.github.lightningnetwork.lnd.lnrpc.*
-import com.google.protobuf.ByteString
 import io.grpc.okhttp.OkHttpChannelBuilder
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -34,7 +33,7 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         .build()
 
     private val asyncStub = LightningGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
-    private val asyncWalletStub = WalletUnlockerGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
+    private var walletUnlocker = WalletUnlocker(channel, macaroonCallCredential)
     private val disposables = CompositeDisposable()
 
     fun scheduleStatusUpdates() {
@@ -67,13 +66,12 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<SendResponse> { asyncStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
     }
 
-    override fun unlockWallet(password: String): Single<UnlockWalletResponse> {
-        val request = UnlockWalletRequest
-            .newBuilder()
-            .setWalletPassword(ByteString.copyFromUtf8(password))
-            .build()
+    override fun unlockWallet(password: String): Single<Unit> {
+        if (walletUnlocker.isUnlocking()) {
+            return Single.error(WalletUnlocker.UnlockingException)
+        }
 
-        return Single.create<UnlockWalletResponse> { asyncWalletStub.unlockWallet(request, StreamObserverToSingle(it)) }
+        return walletUnlocker.startUnlock(password)
     }
 
     override fun listPayments(): Single<ListPaymentsResponse> {
@@ -103,10 +101,12 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
                 }
             }
             .onErrorResumeNext { throwable: Throwable ->
-                val message = throwable.message ?: ""
+                val message = throwable.message?.toLowerCase(Locale.ENGLISH) ?: ""
 
-                val status = if (message.toLowerCase(Locale.ENGLISH).contains("unimplemented")) {
+                val status = if (message.contains("unimplemented")) {
                     ILndNode.Status.LOCKED
+                } else if (message.contains("unavailable") && walletUnlocker.isUnlocking()) {
+                    ILndNode.Status.UNLOCKING
                 } else {
                     ILndNode.Status.ERROR(throwable)
                 }
