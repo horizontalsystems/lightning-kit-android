@@ -2,17 +2,20 @@ package io.horizontalsystems.lightningkit.demo.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import io.horizontalsystems.lightningkit.ILndNode
+import io.horizontalsystems.lightningkit.demo.MainActivity
 import io.horizontalsystems.lightningkit.demo.R
-import io.horizontalsystems.lightningkit.demo.core.App
 import io.horizontalsystems.lightningkit.demo.unlock.UnlockWalletActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), ErrorDialog.Listener {
+
+    private val presenter by lazy { ViewModelProvider(this, HomeModule.Factory()).get(HomePresenter::class.java) }
+    private var errorDialog: ErrorDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,23 +28,35 @@ class HomeActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(viewPager)
 
+        presenter.onLoad()
 
-        val subscribe = App.lightningKit.statusObservable
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                if (it == ILndNode.Status.LOCKED) {
-                    unlockWallet()
-                }
+        presenter.goToUnlockWalletLiveEvent.observe(this, Observer {
+            val intent = Intent(this, UnlockWalletActivity::class.java)
+            startActivity(intent)
+        })
 
-                Log.e("AAA", "Status updated to: ${it}")
-            }, {
-                Log.e("AAA", "Error on status updated", it)
-            })
+        presenter.goToMainLiveEvent.observe(this, Observer {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        })
+
+
+        presenter.error.observe(this, Observer {
+            if (it == null) {
+                errorDialog?.dismiss()
+                errorDialog = null
+            } else {
+                errorDialog = ErrorDialog()
+                errorDialog?.setMessage(it)
+                errorDialog?.show(supportFragmentManager, "dialog")
+            }
+        })
     }
 
-    private fun unlockWallet() {
-        val intent = Intent(this, UnlockWalletActivity::class.java)
-        startActivity(intent)
+    override fun onLogoutClick(dialog: DialogFragment) {
+        presenter.logout()
     }
 }
 
