@@ -1,9 +1,6 @@
 package io.horizontalsystems.lightningkit
 
-import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
-import com.github.lightningnetwork.lnd.lnrpc.ListInvoiceResponse
-import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
-import com.github.lightningnetwork.lnd.lnrpc.SendResponse
+import com.github.lightningnetwork.lnd.lnrpc.*
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -18,6 +15,10 @@ class LightningKit(private val lndNode: ILndNode) {
 
     fun payInvoice(invoice: String): Single<SendResponse> {
         return lndNode.payInvoice(invoice)
+    }
+
+    fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse> {
+        return lndNode.addInvoice(amount, memo)
     }
 
     fun listPayments(): Single<ListPaymentsResponse> {

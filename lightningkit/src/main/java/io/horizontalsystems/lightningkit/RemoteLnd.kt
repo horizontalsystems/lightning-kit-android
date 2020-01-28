@@ -66,6 +66,16 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<SendResponse> { asyncStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
     }
 
+    override fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse> {
+        val invoice = Invoice
+            .newBuilder()
+            .setValue(amount)
+            .setMemo(memo)
+            .build()
+
+        return Single.create<AddInvoiceResponse> { asyncStub.addInvoice(invoice, StreamObserverToSingle(it)) }
+    }
+
     override fun unlockWallet(password: String): Single<Unit> {
         if (walletUnlocker.isUnlocking()) {
             return Single.error(WalletUnlocker.UnlockingException)
