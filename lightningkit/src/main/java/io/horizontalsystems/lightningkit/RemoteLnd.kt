@@ -80,6 +80,23 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
     }
 
+    override fun listInvoices(
+        pendingOnly: Boolean,
+        offset: Long,
+        limit: Long,
+        reversed: Boolean
+    ): Single<ListInvoiceResponse> {
+        val request = ListInvoiceRequest
+            .newBuilder()
+            .setPendingOnly(pendingOnly)
+            .setIndexOffset(offset)
+            .setNumMaxInvoices(limit)
+            .setReversed(reversed)
+            .build()
+
+        return Single.create<ListInvoiceResponse> { asyncStub.listInvoices(request, StreamObserverToSingle(it)) }
+    }
+
     fun validateAsync(): Single<Unit> {
         return fetchStatus()
             .flatMap {

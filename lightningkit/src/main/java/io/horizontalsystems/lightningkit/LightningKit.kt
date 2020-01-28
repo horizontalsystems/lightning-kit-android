@@ -1,6 +1,7 @@
 package io.horizontalsystems.lightningkit
 
 import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
+import com.github.lightningnetwork.lnd.lnrpc.ListInvoiceResponse
 import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
 import com.github.lightningnetwork.lnd.lnrpc.SendResponse
 import io.reactivex.Observable
@@ -21,6 +22,10 @@ class LightningKit(private val lndNode: ILndNode) {
 
     fun listPayments(): Single<ListPaymentsResponse> {
         return lndNode.listPayments()
+    }
+
+    fun listInvoices(pending_only: Boolean = false, offset: Long = 0, limit: Long = 1000, reversed: Boolean = false): Single<ListInvoiceResponse> {
+        return lndNode.listInvoices(pending_only, offset, limit, reversed)
     }
 
     fun unlockWallet(password: String): Single<Unit> {
