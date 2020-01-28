@@ -3,7 +3,6 @@ package io.horizontalsystems.lightningkit.demo.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -75,8 +74,7 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener, UnlockWalletDial
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.options, menu)
+        menuInflater.inflate(R.menu.options, menu)
         return true
     }
 
