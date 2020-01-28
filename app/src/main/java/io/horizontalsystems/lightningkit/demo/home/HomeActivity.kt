@@ -2,7 +2,9 @@ package io.horizontalsystems.lightningkit.demo.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +22,8 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener, UnlockWalletDial
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        val unlockingGroup = findViewById<Group>(R.id.unlockingGroup)
 
         val homeFragmentsAdapter = HomeFragmentsAdapter(supportFragmentManager)
         val viewPager = findViewById<ViewPager>(R.id.pager)
@@ -60,6 +64,10 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener, UnlockWalletDial
 
         presenter.unlockError.observe(this, Observer {
             unlockWalletDialog?.setPasswordError(it.message)
+        })
+
+        presenter.unlockingProgress.observe(this, Observer {
+            unlockingGroup.visibility = if (it) View.VISIBLE else View.GONE
         })
 
     }

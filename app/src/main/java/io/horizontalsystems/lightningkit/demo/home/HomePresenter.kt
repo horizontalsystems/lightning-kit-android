@@ -8,6 +8,7 @@ import io.horizontalsystems.lightningkit.demo.core.SingleLiveEvent
 
 class HomePresenter(private val interactor: HomeModule.IInteractor) : HomeModule.IInteractorDelegate, ViewModel() {
     val toggleUnlockWalletDialog = SingleLiveEvent<Boolean>()
+    val unlockingProgress = SingleLiveEvent<Boolean>()
     val goToMainLiveEvent = SingleLiveEvent<Unit>()
     val error = MutableLiveData<String?>()
     val unlockError = MutableLiveData<Throwable>()
@@ -18,6 +19,7 @@ class HomePresenter(private val interactor: HomeModule.IInteractor) : HomeModule
 
     override fun onStatusUpdate(status: ILndNode.Status) {
         toggleUnlockWalletDialog.postValue(status is ILndNode.Status.LOCKED)
+        unlockingProgress.postValue(status is ILndNode.Status.UNLOCKING)
 
         if (status is ILndNode.Status.ERROR) {
             val throwable = status.throwable
