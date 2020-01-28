@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:hint="Invoice"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -27,7 +28,6 @@
                 android:id="@+id/invoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Invoice"
                 android:inputType="textMultiLine"
                 android:lines="3"
                 />

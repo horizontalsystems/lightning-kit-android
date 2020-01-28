@@ -58,11 +58,21 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<ListChannelsResponse> { asyncStub.listChannels(request, StreamObserverToSingle(it)) }
     }
 
-    override fun payInvoice(invoice: String): Single<SendResponse> {
-        val requestBuilder = SendRequest.newBuilder()
-        requestBuilder.setPaymentRequest(invoice)
+    override fun decodePayReq(req: String): Single<PayReq> {
+        val request = PayReqString
+            .newBuilder()
+            .setPayReq(req)
+            .build()
 
-        val request = requestBuilder.build()
+        return Single.create<PayReq> { asyncStub.decodePayReq(request, StreamObserverToSingle(it)) }
+    }
+
+    override fun payInvoice(invoice: String): Single<SendResponse> {
+        val request = SendRequest
+            .newBuilder()
+            .setPaymentRequest(invoice)
+            .build()
+
         return Single.create<SendResponse> { asyncStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
     }
 

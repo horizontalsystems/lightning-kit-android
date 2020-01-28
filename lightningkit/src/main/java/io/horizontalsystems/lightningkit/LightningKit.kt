@@ -13,6 +13,10 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.listChannels()
     }
 
+    fun decodePayReq(req: String): Single<PayReq> {
+        return lndNode.decodePayReq(req)
+    }
+
     fun payInvoice(invoice: String): Single<SendResponse> {
         return lndNode.payInvoice(invoice)
     }

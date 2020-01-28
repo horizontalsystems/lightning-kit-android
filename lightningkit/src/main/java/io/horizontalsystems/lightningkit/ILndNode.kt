@@ -37,4 +37,5 @@ interface ILndNode {
     fun payInvoice(invoice: String): Single<SendResponse>
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse>
     fun unlockWallet(password: String): Single<Unit>
+    fun decodePayReq(req: String): Single<PayReq>
 }
