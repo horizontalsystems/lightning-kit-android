@@ -2,17 +2,14 @@ package io.horizontalsystems.lightningkit.demo.home
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentPagerAdapter
+import io.horizontalsystems.lightningkit.demo.addinvoice.AddInvoiceFragment
 import io.horizontalsystems.lightningkit.demo.channels.ChannelsFragment
 import io.horizontalsystems.lightningkit.demo.invoices.InvoicesFragment
-import io.horizontalsystems.lightningkit.demo.addinvoice.AddInvoiceFragment
 import io.horizontalsystems.lightningkit.demo.payments.PaymentsFragment
 import io.horizontalsystems.lightningkit.demo.send.PayFragment
 
-class HomeFragmentsAdapter(fm: FragmentManager) :
-    FragmentStatePagerAdapter(fm,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
+class HomeFragmentsAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val fragments = arrayOf(
         Pair("Channels", { ChannelsFragment() }),
