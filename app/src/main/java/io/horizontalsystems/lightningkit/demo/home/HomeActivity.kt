@@ -10,12 +10,12 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import io.horizontalsystems.lightningkit.demo.MainActivity
 import io.horizontalsystems.lightningkit.demo.R
-import io.horizontalsystems.lightningkit.demo.unlock.UnlockWalletActivity
 
-class HomeActivity : AppCompatActivity(), ErrorDialog.Listener {
+class HomeActivity : AppCompatActivity(), ErrorDialog.Listener, UnlockWalletDialog.Listener {
 
     private val presenter by lazy { ViewModelProvider(this, HomeModule.Factory()).get(HomePresenter::class.java) }
     private var errorDialog: ErrorDialog? = null
+    private var unlockWalletDialog: UnlockWalletDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +30,6 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener {
 
         presenter.onLoad()
 
-        presenter.goToUnlockWalletLiveEvent.observe(this, Observer {
-            val intent = Intent(this, UnlockWalletActivity::class.java)
-            startActivity(intent)
-        })
-
         presenter.goToMainLiveEvent.observe(this, Observer {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -42,17 +37,35 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener {
             finish()
         })
 
-
-        presenter.error.observe(this, Observer {
-            if (it == null) {
+        presenter.error.observe(this, Observer { errorMessage ->
+            if (errorMessage != null) {
+                errorDialog = ErrorDialog()
+                errorDialog?.setMessage(errorMessage)
+                errorDialog?.show(supportFragmentManager, "ErrorDialog")
+            } else {
                 errorDialog?.dismiss()
                 errorDialog = null
-            } else {
-                errorDialog = ErrorDialog()
-                errorDialog?.setMessage(it)
-                errorDialog?.show(supportFragmentManager, "dialog")
             }
         })
+
+        presenter.toggleUnlockWalletDialog.observe(this, Observer { show ->
+            if (show) {
+                unlockWalletDialog = UnlockWalletDialog()
+                unlockWalletDialog?.show(supportFragmentManager, "UnlockWalletDialog")
+            } else {
+                unlockWalletDialog?.dismiss()
+                unlockWalletDialog = null
+            }
+        })
+
+        presenter.unlockError.observe(this, Observer {
+            unlockWalletDialog?.setPasswordError(it.message)
+        })
+
+    }
+
+    override fun onUnlockClick(dialog: DialogFragment, password: String) {
+        presenter.unlock(password)
     }
 
     override fun onLogoutClick(dialog: DialogFragment) {

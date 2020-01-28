@@ -21,7 +21,6 @@
         </activity>
         <activity android:name=".GuestActivity" />
         <activity android:name=".home.HomeActivity" />
-        <activity android:name=".unlock.UnlockWalletActivity" />
         <activity android:name=".remoteconnection.RemoteConnectionActivity" />
 
     </application>

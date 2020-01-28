@@ -9,12 +9,15 @@ object HomeModule {
     interface IInteractor {
         fun subscribeToStatusUpdates()
         fun logout()
+        fun unlock(password: String)
     }
 
     interface IInteractorDelegate {
         fun onLoad()
         fun onStatusUpdate(status: ILndNode.Status)
         fun onLogout()
+        fun onUnlockSuccess()
+        fun onUnlockFailed(throwable: Throwable)
     }
 
     class Factory : ViewModelProvider.Factory {

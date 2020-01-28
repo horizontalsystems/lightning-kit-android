@@ -22,4 +22,15 @@ class HomeInteractor(private val lightningKit: LightningKit, private val storage
         storage.clearConnectionParams()
         delegate.onLogout()
     }
+
+    override fun unlock(password: String) {
+        disposables.add(
+            lightningKit.unlockWallet(password)
+                .subscribe({
+                    delegate.onUnlockSuccess()
+                }, {
+                    delegate.onUnlockFailed(it)
+                })
+        )
+    }
 }
