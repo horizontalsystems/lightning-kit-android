@@ -8,17 +8,19 @@ import io.horizontalsystems.lightningkit.ILndNode
 
 class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : ViewModel(),
     InvoicesModule.IInteractorDelegate {
-    val invoices = MutableLiveData<List<Invoice>>()
+    val invoicesUpdate = MutableLiveData<List<Invoice>>()
+    val invoiceUpdate = MutableLiveData<Invoice>()
 
     fun onLoad() {
         interactor.subscribeToStatusUpdates()
+        interactor.subscribeToInvoices()
         interactor.retrieveInvoices()
     }
 
     // IInteractorDelegate
 
     override fun onReceiveInvoices(info: ListInvoiceResponse) {
-        invoices.postValue(info.invoicesList)
+        invoicesUpdate.postValue(info.invoicesList)
     }
 
     override fun onReceivedError(e: Throwable) {
@@ -29,5 +31,9 @@ class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : Vi
         if (status == ILndNode.Status.RUNNING) {
             interactor.retrieveInvoices()
         }
+    }
+
+    override fun onInvoiceUpdate(invoice: Invoice) {
+        invoiceUpdate.postValue(invoice)
     }
 }

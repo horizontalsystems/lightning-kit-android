@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.LightningKit
 import io.reactivex.disposables.CompositeDisposable
 
-class PaymentsInteractor(private val lightningKit: LightningKit) : ViewModel(), PaymentsModule.IInteractor {
+class PaymentsInteractor(private val lightningKit: LightningKit) : PaymentsModule.IInteractor {
     lateinit var delegate: PaymentsModule.IInteractorDelegate
 
     private val disposables = CompositeDisposable()

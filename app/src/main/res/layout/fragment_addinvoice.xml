@@ -61,6 +61,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/memoInputLayout" />
 
+        <TextView
+            android:id="@+id/invoice"
+            android:layout_width="363dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="16dp"
+            android:selectAllOnFocus="true"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/generate" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

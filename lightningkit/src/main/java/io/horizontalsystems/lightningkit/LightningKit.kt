@@ -8,6 +8,8 @@ class LightningKit(private val lndNode: ILndNode) {
 
     val statusObservable: Observable<ILndNode.Status>
         get() = lndNode.statusObservable
+    val invoicesObservable: Observable<Invoice>
+        get() = lndNode.invoicesObservable()
 
     fun listChannels(): Single<ListChannelsResponse> {
         return lndNode.listChannels()

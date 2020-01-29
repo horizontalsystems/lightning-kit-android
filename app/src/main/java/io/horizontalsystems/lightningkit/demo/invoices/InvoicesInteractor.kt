@@ -1,10 +1,9 @@
 package io.horizontalsystems.lightningkit.demo.invoices
 
-import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.LightningKit
 import io.reactivex.disposables.CompositeDisposable
 
-class InvoicesInteractor(private val lightningKit: LightningKit) : ViewModel(), InvoicesModule.IInteractor {
+class InvoicesInteractor(private val lightningKit: LightningKit) : InvoicesModule.IInteractor {
     lateinit var delegate: InvoicesModule.IInteractorDelegate
 
     private val disposables = CompositeDisposable()
@@ -25,6 +24,16 @@ class InvoicesInteractor(private val lightningKit: LightningKit) : ViewModel(), 
         lightningKit.statusObservable
             .subscribe {
                 delegate.onStatusUpdate(it)
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun subscribeToInvoices() {
+        lightningKit.invoicesObservable
+            .subscribe {
+                delegate.onInvoiceUpdate(it)
             }
             .let {
                 disposables.add(it)

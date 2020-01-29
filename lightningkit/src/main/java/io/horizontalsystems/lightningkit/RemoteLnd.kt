@@ -117,6 +117,14 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<ListInvoiceResponse> { asyncStub.listInvoices(request, StreamObserverToSingle(it)) }
     }
 
+    override fun invoicesObservable(): Observable<Invoice> {
+        val request = InvoiceSubscription
+            .newBuilder()
+            .build()
+
+        return Observable.create<Invoice> { asyncStub.subscribeInvoices(request, StreamObserverToObserver(it)) }
+    }
+
     fun validateAsync(): Single<Unit> {
         return fetchStatus()
             .flatMap {

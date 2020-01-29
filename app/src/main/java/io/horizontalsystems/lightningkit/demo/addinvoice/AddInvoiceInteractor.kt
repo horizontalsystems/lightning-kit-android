@@ -13,8 +13,10 @@ class AddInvoiceInteractor() : AddInvoiceModule.IInteractor {
         App.lightningKit.addInvoice(amount, memo)
             .subscribe({
                 Log.d("NEW INVOICE", "Invoice Added! ${it.paymentRequest}")
+                delegate.onSuccessAdd(it.paymentRequest)
             }, {
                 Log.e("NEW INVOICE", "Invoice add error: $it")
+                delegate.onFailureAdd(it)
             })
             .let {
                 disposables.add(it)

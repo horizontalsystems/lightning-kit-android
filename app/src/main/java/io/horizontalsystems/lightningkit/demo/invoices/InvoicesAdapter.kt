@@ -6,12 +6,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.lightningnetwork.lnd.lnrpc.Invoice
 
 class InvoicesAdapter : RecyclerView.Adapter<InvoiceViewHolder>() {
-    private var items: List<Invoice> = listOf()
+    private var items: MutableList<Invoice> = mutableListOf()
 
     fun update(items: List<Invoice>) {
-        this.items = items
+        this.items = items.toMutableList()
 
         notifyDataSetChanged()
+    }
+
+    fun update(item: Invoice) {
+        val itemIndex = items.indexOfFirst {
+            it.rHash == item.rHash
+        }
+
+        if (itemIndex > 0) {
+            items[itemIndex] = item
+
+            notifyItemChanged(itemIndex)
+        }
     }
 
     override fun getItemCount(): Int {

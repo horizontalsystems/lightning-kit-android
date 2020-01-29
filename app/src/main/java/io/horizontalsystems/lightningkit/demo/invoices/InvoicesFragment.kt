@@ -24,7 +24,11 @@ class InvoicesFragment : Fragment() {
         val rvPayments = view.findViewById<RecyclerView>(R.id.invoices)
         rvPayments.adapter = invoicesAdapter
 
-        presenter.invoices.observe(viewLifecycleOwner, Observer {
+        presenter.invoicesUpdate.observe(viewLifecycleOwner, Observer {
+            invoicesAdapter.update(it)
+        })
+
+        presenter.invoiceUpdate.observe(viewLifecycleOwner, Observer {
             invoicesAdapter.update(it)
         })
     }

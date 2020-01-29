@@ -2,6 +2,7 @@ package io.horizontalsystems.lightningkit.demo.invoices
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.github.lightningnetwork.lnd.lnrpc.Invoice
 import com.github.lightningnetwork.lnd.lnrpc.ListInvoiceResponse
 import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.demo.core.App
@@ -11,12 +12,14 @@ object InvoicesModule {
         fun retrieveInvoices()
         fun subscribeToStatusUpdates()
         fun clear()
+        fun subscribeToInvoices()
     }
 
     interface IInteractorDelegate {
         fun onReceiveInvoices(info: ListInvoiceResponse)
         fun onReceivedError(e: Throwable)
         fun onStatusUpdate(status: ILndNode.Status)
+        fun onInvoiceUpdate(invoice: Invoice)
     }
 
     class Factory : ViewModelProvider.Factory {

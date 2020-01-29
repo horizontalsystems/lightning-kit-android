@@ -10,6 +10,8 @@ object AddInvoiceModule {
     }
 
     interface IInteractorDelegate {
+        fun onSuccessAdd(invoiceString: String)
+        fun onFailureAdd(throwable: Throwable)
     }
 
     class Factory : ViewModelProvider.Factory {

@@ -33,6 +33,7 @@ interface ILndNode {
         limit: Long,
         reversed: Boolean
     ): Single<ListInvoiceResponse>
+    fun invoicesObservable(): Observable<Invoice>
 
     fun payInvoice(invoice: String): Single<SendResponse>
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse>
