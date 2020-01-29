@@ -41,5 +41,5 @@ dependencies {
     implementation project(':lightningkit')
 
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0-rc03"
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
 }
