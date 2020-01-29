@@ -22,7 +22,11 @@ class PayInteractor(private val lightningKit: LightningKit) : PayModule.IInterac
     override fun payInvoice(invoice: String) {
         lightningKit.payInvoice(invoice)
             .subscribe({
-                delegate.onSuccessPayment(it)
+                if (it.paymentError.isBlank()) {
+                    delegate.onSuccessPayment(it)
+                } else {
+                    delegate.onFailurePayment(Exception(it.paymentError))
+                }
             }, {
                 delegate.onFailurePayment(it)
             })

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -50,6 +51,14 @@ class PayFragment : Fragment(), ConfirmDialog.Listener {
 
         presenter.clearInvoice.observe(viewLifecycleOwner, Observer {
             invoiceTextInputEditText.text = null
+        })
+
+        presenter.showPaidLiveEvent.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, "Successfully paid", Toast.LENGTH_LONG).show()
+        })
+
+        presenter.paymentError.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
         })
     }
 

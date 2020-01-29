@@ -9,6 +9,8 @@ class PayPresenter(private val interactor: PayModule.IInteractor) : ViewModel(),
     var invoice = ""
     val payReq = SingleLiveEvent<PayReq>()
     val clearInvoice = SingleLiveEvent<Unit>()
+    val showPaidLiveEvent = SingleLiveEvent<Unit>()
+    val paymentError = SingleLiveEvent<Throwable>()
 
     fun send() {
         interactor.decodeInvoice(invoice)
@@ -23,11 +25,12 @@ class PayPresenter(private val interactor: PayModule.IInteractor) : ViewModel(),
     }
 
     override fun onSuccessPayment(sendResponse: SendResponse) {
+        showPaidLiveEvent.postValue(Unit)
         clearInvoice.postValue(Unit)
     }
 
     override fun onFailurePayment(throwable: Throwable) {
-
+        paymentError.postValue(throwable)
     }
 
     // ViewModel
