@@ -39,6 +39,21 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.unlockWallet(password)
     }
 
+    fun openChannel(nodePubKey: String, amount: Long, nodeAddress: String): Single<OpenStatusUpdate> {
+        return lndNode.connect(nodeAddress, nodePubKey)
+            .map { Unit }
+            .onErrorResumeNext {
+                if (it.message?.contains("already connected to peer") == true) {
+                    Single.just(Unit)
+                } else {
+                    Single.error(it)
+                }
+            }
+            .flatMap {
+                lndNode.openChannel(nodePubKey, amount)
+            }
+    }
+
     companion object {
         fun validateRemoteConnection(host: String, port: Int, certificate: String, macaroon: String): Single<Unit> {
             val remoteLndNode = RemoteLnd(host, port, certificate, macaroon)

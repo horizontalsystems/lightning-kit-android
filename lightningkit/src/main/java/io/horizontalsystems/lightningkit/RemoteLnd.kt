@@ -2,6 +2,7 @@ package io.horizontalsystems.lightningkit
 
 import android.util.Base64
 import com.github.lightningnetwork.lnd.lnrpc.*
+import com.google.protobuf.ByteString
 import io.grpc.okhttp.OkHttpChannelBuilder
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -123,6 +124,31 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
             .build()
 
         return Observable.create<Invoice> { asyncStub.subscribeInvoices(request, StreamObserverToObserver(it)) }
+    }
+
+    override fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate> {
+        val openChannelRequest = OpenChannelRequest.newBuilder()
+            .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
+            .setSatPerByte(2) // todo: extract as param
+            .setLocalFundingAmount(amount)
+            .build()
+
+        return Single.create<OpenStatusUpdate> { asyncStub.openChannel(openChannelRequest, StreamObserverToSingle(it)) }
+    }
+
+    override fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse> {
+        val lightningAddress = LightningAddress
+            .newBuilder()
+            .setPubkey(nodePubKey)
+            .setHost(nodeAddress)
+            .build()
+
+        val request = ConnectPeerRequest
+            .newBuilder()
+            .setAddr(lightningAddress)
+            .build()
+
+        return Single.create<ConnectPeerResponse> { asyncStub.connectPeer(request, StreamObserverToSingle(it)) }
     }
 
     fun validateAsync(): Single<Unit> {
