@@ -3,7 +3,6 @@ package io.horizontalsystems.lightningkit.demo.home
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import io.horizontalsystems.lightningkit.demo.addinvoice.AddInvoiceFragment
 import io.horizontalsystems.lightningkit.demo.channels.ChannelsFragment
 import io.horizontalsystems.lightningkit.demo.invoices.InvoicesFragment
 import io.horizontalsystems.lightningkit.demo.payments.PaymentsFragment
@@ -13,8 +12,7 @@ class HomeFragmentsAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAV
     private val fragments = arrayOf(
         Pair("Channels", { ChannelsFragment() }),
         Pair("Payments", { PaymentsFragment() }),
-        Pair("Invoices", { InvoicesFragment() }),
-        Pair("New Invoice", { AddInvoiceFragment() })
+        Pair("Invoices", { InvoicesFragment() })
     )
 
     override fun getCount(): Int = fragments.size

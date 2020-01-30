@@ -16,7 +16,7 @@ class PayActivity : AppCompatActivity(), ConfirmDialog.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_pay)
+        setContentView(R.layout.activity_pay)
         title = "Pay Invoice"
 
         val sendButton = findViewById<Button>(R.id.send)
