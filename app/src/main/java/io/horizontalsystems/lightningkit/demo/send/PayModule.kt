@@ -15,6 +15,7 @@ object PayModule {
 
     interface IInteractorDelegate {
         fun onPayReqDecode(payReq: PayReq)
+        fun onInvoiceDecodeFailed(throwable: Throwable)
         fun onSuccessPayment(sendResponse: SendResponse)
         fun onFailurePayment(throwable: Throwable)
     }

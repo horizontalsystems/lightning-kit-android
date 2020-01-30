@@ -23,6 +23,7 @@
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".remoteconnection.RemoteConnectionActivity" />
         <activity android:name=".openchannel.OpenChannelActivity" />
+        <activity android:name=".send.PayActivity" />
 
     </application>
 

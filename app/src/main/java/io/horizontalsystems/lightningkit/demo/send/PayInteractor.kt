@@ -12,7 +12,7 @@ class PayInteractor(private val lightningKit: LightningKit) : PayModule.IInterac
             .subscribe({
                 delegate.onPayReqDecode(it)
             }, {
-
+                delegate.onInvoiceDecodeFailed(it)
             })
             .let {
                 disposables.add(it)

@@ -1,31 +1,26 @@
 package io.horizontalsystems.lightningkit.demo.send
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import io.horizontalsystems.lightningkit.demo.R
 
-class PayFragment : Fragment(), ConfirmDialog.Listener {
+class PayActivity : AppCompatActivity(), ConfirmDialog.Listener {
     val presenter by lazy { ViewModelProvider(this, PayModule.Factory()).get(PayPresenter::class.java) }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_pay, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_pay)
+        title = "Pay Invoice"
 
-        val sendButton = view.findViewById<Button>(R.id.send)
-        val invoiceTextInputEditText = view.findViewById<TextInputEditText>(R.id.invoice)
+        val sendButton = findViewById<Button>(R.id.send)
+        val invoiceTextInputEditText = findViewById<TextInputEditText>(R.id.invoice)
 
         invoiceTextInputEditText.addTextChangedListener {
             presenter.invoice = it.toString()
@@ -35,7 +30,7 @@ class PayFragment : Fragment(), ConfirmDialog.Listener {
             presenter.send()
         }
 
-        presenter.payReq.observe(viewLifecycleOwner, Observer { payReq ->
+        presenter.payReq.observe(this, Observer { payReq ->
             val payReqText = listOf(
                 "Satoshis" to payReq.numSatoshis,
                 "Payment Hash" to payReq.paymentHash,
@@ -46,19 +41,25 @@ class PayFragment : Fragment(), ConfirmDialog.Listener {
 
             val confirmDialog = ConfirmDialog()
             confirmDialog.setMessage(payReqText)
-            confirmDialog.show(childFragmentManager, "ErrorDialog")
+            confirmDialog.show(supportFragmentManager, "confirm")
         })
 
-        presenter.clearInvoice.observe(viewLifecycleOwner, Observer {
+        presenter.clearInvoice.observe(this, Observer {
             invoiceTextInputEditText.text = null
         })
 
-        presenter.showPaidLiveEvent.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, "Successfully paid", Toast.LENGTH_LONG).show()
+        presenter.showPaidLiveEvent.observe(this, Observer {
+            Toast.makeText(this, "Successfully paid", Toast.LENGTH_LONG).show()
+
+            finish()
         })
 
-        presenter.paymentError.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        presenter.paymentError.observe(this, Observer {
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+        })
+
+        presenter.invoiceError.observe(this, Observer {
+            invoiceTextInputEditText.error = it.message
         })
     }
 

@@ -7,7 +7,6 @@ import io.horizontalsystems.lightningkit.demo.addinvoice.AddInvoiceFragment
 import io.horizontalsystems.lightningkit.demo.channels.ChannelsFragment
 import io.horizontalsystems.lightningkit.demo.invoices.InvoicesFragment
 import io.horizontalsystems.lightningkit.demo.payments.PaymentsFragment
-import io.horizontalsystems.lightningkit.demo.send.PayFragment
 
 class HomeFragmentsAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -15,7 +14,6 @@ class HomeFragmentsAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAV
         Pair("Channels", { ChannelsFragment() }),
         Pair("Payments", { PaymentsFragment() }),
         Pair("Invoices", { InvoicesFragment() }),
-        Pair("Pay", { PayFragment() }),
         Pair("New Invoice", { AddInvoiceFragment() })
     )
 

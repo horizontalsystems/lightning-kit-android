@@ -18,6 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="Invoice"
             app:endIconMode="clear_text"
@@ -30,8 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:lines="3"
-                />
+                android:lines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
