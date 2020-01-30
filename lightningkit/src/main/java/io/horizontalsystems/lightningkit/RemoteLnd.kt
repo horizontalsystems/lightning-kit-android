@@ -53,6 +53,18 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<GetInfoResponse> { asyncStub.getInfo(request, StreamObserverToSingle(it)) }
     }
 
+    override fun getWalletBalance(): Single<WalletBalanceResponse> {
+        val request = WalletBalanceRequest.newBuilder().build()
+
+        return Single.create<WalletBalanceResponse> { asyncStub.walletBalance(request, StreamObserverToSingle(it)) }
+    }
+
+    override fun getChannelBalance(): Single<ChannelBalanceResponse> {
+        val request = ChannelBalanceRequest.newBuilder().build()
+
+        return Single.create<ChannelBalanceResponse> { asyncStub.channelBalance(request, StreamObserverToSingle(it)) }
+    }
+
     override fun listChannels(): Single<ListChannelsResponse> {
         val request = ListChannelsRequest.newBuilder().build()
 

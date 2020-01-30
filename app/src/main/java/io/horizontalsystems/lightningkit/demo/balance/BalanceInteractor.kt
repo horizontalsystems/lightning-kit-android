@@ -1,0 +1,49 @@
+package io.horizontalsystems.lightningkit.demo.balance
+
+import androidx.lifecycle.ViewModel
+import io.horizontalsystems.lightningkit.LightningKit
+import io.reactivex.disposables.CompositeDisposable
+
+class BalanceInteractor(private val lightningKit: LightningKit) : ViewModel(), BalanceModule.IInteractor {
+    lateinit var delegate: BalanceModule.IInteractorDelegate
+
+    private val disposables = CompositeDisposable()
+
+    override fun subscribeToStatusUpdates() {
+        lightningKit.statusObservable
+            .subscribe {
+                delegate.onStatusUpdate(it)
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun getWalletBalance() {
+        lightningKit.getWalletBalance()
+            .subscribe({
+                delegate.onReceiveWalletBalance(it)
+            }, {
+                delegate.onReceiveWalletBalance(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun getChannelBalance() {
+        lightningKit.getChannelBalance()
+            .subscribe({
+                delegate.onReceiveChannelBalance(it)
+            }, {
+                delegate.onReceiveChannelBalance(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun clear() {
+        disposables.clear()
+    }
+}

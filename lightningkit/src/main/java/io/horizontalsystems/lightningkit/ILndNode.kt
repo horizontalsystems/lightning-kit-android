@@ -25,6 +25,8 @@ interface ILndNode {
     val statusObservable: Observable<Status>
 
     fun getInfo(): Single<GetInfoResponse>
+    fun getWalletBalance(): Single<WalletBalanceResponse>
+    fun getChannelBalance(): Single<ChannelBalanceResponse>
     fun listChannels(): Single<ListChannelsResponse>
     fun listPayments(): Single<ListPaymentsResponse>
     fun listInvoices(

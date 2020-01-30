@@ -11,6 +11,14 @@ class LightningKit(private val lndNode: ILndNode) {
     val invoicesObservable: Observable<Invoice>
         get() = lndNode.invoicesObservable()
 
+    fun getWalletBalance(): Single<WalletBalanceResponse> {
+        return lndNode.getWalletBalance()
+    }
+
+    fun getChannelBalance(): Single<ChannelBalanceResponse> {
+        return lndNode.getChannelBalance()
+    }
+
     fun listChannels(): Single<ListChannelsResponse> {
         return lndNode.listChannels()
     }
