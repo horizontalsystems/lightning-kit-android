@@ -32,4 +32,8 @@ class PaymentsPresenter(private val interactor: PaymentsModule.IInteractor) : Vi
             interactor.retrievePayments()
         }
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

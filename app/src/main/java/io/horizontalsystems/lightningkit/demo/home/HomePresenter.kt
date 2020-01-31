@@ -56,4 +56,8 @@ class HomePresenter(private val interactor: HomeModule.IInteractor) : HomeModule
     override fun onUnlockFailed(throwable: Throwable) {
         unlockError.postValue(throwable)
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

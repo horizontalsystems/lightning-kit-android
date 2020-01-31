@@ -1,6 +1,5 @@
 package io.horizontalsystems.lightningkit.demo.payments
 
-import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.LightningKit
 import io.reactivex.disposables.CompositeDisposable
 
@@ -30,8 +29,6 @@ class PaymentsInteractor(private val lightningKit: LightningKit) : PaymentsModul
                 disposables.add(it)
             }
     }
-
-    // ViewModel
 
     override fun clear() {
         disposables.clear()

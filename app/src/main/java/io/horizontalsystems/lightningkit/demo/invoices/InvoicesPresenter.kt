@@ -39,4 +39,8 @@ class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : Vi
     override fun onInvoiceUpdate(invoice: Invoice) {
         invoiceUpdate.postValue(invoice)
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

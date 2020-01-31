@@ -33,4 +33,8 @@ class HomeInteractor(private val lightningKit: LightningKit, private val storage
                 })
         )
     }
+
+    override fun clear() {
+        disposables.clear()
+    }
 }

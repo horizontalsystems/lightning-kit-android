@@ -40,8 +40,6 @@ class InvoicesInteractor(private val lightningKit: LightningKit) : InvoicesModul
             }
     }
 
-    // ViewModel
-
     override fun clear() {
         disposables.clear()
     }

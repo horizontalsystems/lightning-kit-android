@@ -1,10 +1,9 @@
 package io.horizontalsystems.lightningkit.demo.balance
 
-import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.LightningKit
 import io.reactivex.disposables.CompositeDisposable
 
-class BalanceInteractor(private val lightningKit: LightningKit) : ViewModel(), BalanceModule.IInteractor {
+class BalanceInteractor(private val lightningKit: LightningKit) : BalanceModule.IInteractor {
     lateinit var delegate: BalanceModule.IInteractorDelegate
 
     private val disposables = CompositeDisposable()

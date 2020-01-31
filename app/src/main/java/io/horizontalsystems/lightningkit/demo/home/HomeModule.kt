@@ -10,6 +10,7 @@ object HomeModule {
         fun subscribeToStatusUpdates()
         fun logout()
         fun unlock(password: String)
+        fun clear()
     }
 
     interface IInteractorDelegate {

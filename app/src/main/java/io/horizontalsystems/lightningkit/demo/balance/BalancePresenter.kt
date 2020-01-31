@@ -47,4 +47,7 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
         }
     }
 
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

@@ -36,4 +36,8 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
     override fun onChannelsUpdate(channelEventUpdate: ChannelEventUpdate) {
         interactor.listChannels()
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }
