@@ -12,6 +12,10 @@ class LightningKit(private val lndNode: ILndNode) {
     val invoicesObservable: Observable<Invoice>
         get() = lndNode.invoicesObservable()
 
+    private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
+
+    val paymentsUpdatedObservable: Observable<Unit> = paymentsUpdatedSubject
+
     fun getWalletBalance(): Single<WalletBalanceResponse> {
         return lndNode.getWalletBalance()
     }
