@@ -3,6 +3,7 @@ package io.horizontalsystems.lightningkit
 import com.github.lightningnetwork.lnd.lnrpc.*
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 
 class LightningKit(private val lndNode: ILndNode) {
 
@@ -29,6 +30,11 @@ class LightningKit(private val lndNode: ILndNode) {
 
     fun payInvoice(invoice: String): Single<SendResponse> {
         return lndNode.payInvoice(invoice)
+            .doOnSuccess {
+                if (it.paymentError.isEmpty()) {
+                    paymentsUpdatedSubject.onNext(Unit)
+                }
+            }
     }
 
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse> {
