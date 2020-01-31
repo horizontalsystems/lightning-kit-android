@@ -11,6 +11,8 @@ class LightningKit(private val lndNode: ILndNode) {
         get() = lndNode.statusObservable
     val invoicesObservable: Observable<Invoice>
         get() = lndNode.invoicesObservable()
+    val channelsObservable: Observable<ChannelEventUpdate>
+        get() = lndNode.channelsObservable()
 
     private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
 

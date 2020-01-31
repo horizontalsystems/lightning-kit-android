@@ -138,6 +138,14 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Observable.create<Invoice> { asyncStub.subscribeInvoices(request, StreamObserverToObserver(it)) }
     }
 
+    override fun channelsObservable(): Observable<ChannelEventUpdate> {
+        val channelEventSubscription = ChannelEventSubscription
+            .newBuilder()
+            .build()
+
+        return Observable.create<ChannelEventUpdate> { asyncStub.subscribeChannelEvents(channelEventSubscription, StreamObserverToObserver(it)) }
+    }
+
     override fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate> {
         val openChannelRequest = OpenChannelRequest.newBuilder()
             .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
