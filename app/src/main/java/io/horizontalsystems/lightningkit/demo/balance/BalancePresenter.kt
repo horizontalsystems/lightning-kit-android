@@ -14,8 +14,11 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
     val channelBalance = MutableLiveData<String>()
     val pendingOpenChannelBalance = MutableLiveData<String>()
 
-    fun onLoad() {
+    init {
         interactor.subscribeToStatusUpdates()
+    }
+
+    fun onLoad() {
         interactor.getWalletBalance()
         interactor.getChannelBalance()
     }

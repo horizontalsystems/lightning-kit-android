@@ -2,8 +2,8 @@ package io.horizontalsystems.lightningkit.demo.invoices
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.github.lightningnetwork.lnd.lnrpc.ListInvoiceResponse
 import com.github.lightningnetwork.lnd.lnrpc.Invoice
+import com.github.lightningnetwork.lnd.lnrpc.ListInvoiceResponse
 import io.horizontalsystems.lightningkit.ILndNode
 
 class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : ViewModel(),
@@ -11,9 +11,12 @@ class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : Vi
     val invoicesUpdate = MutableLiveData<List<Invoice>>()
     val invoiceUpdate = MutableLiveData<Invoice>()
 
-    fun onLoad() {
+    init {
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToInvoices()
+    }
+
+    fun onLoad() {
         interactor.retrieveInvoices()
     }
 

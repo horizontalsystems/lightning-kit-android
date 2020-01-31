@@ -13,7 +13,6 @@ object HomeModule {
     }
 
     interface IInteractorDelegate {
-        fun onLoad()
         fun onStatusUpdate(status: ILndNode.Status)
         fun onLogout()
         fun onUnlockSuccess()

@@ -6,12 +6,14 @@ import com.github.lightningnetwork.lnd.lnrpc.ListPaymentsResponse
 import com.github.lightningnetwork.lnd.lnrpc.Payment
 import io.horizontalsystems.lightningkit.ILndNode
 
-class PaymentsPresenter(private val interactor: PaymentsModule.IInteractor) : ViewModel(),
-    PaymentsModule.IInteractorDelegate {
+class PaymentsPresenter(private val interactor: PaymentsModule.IInteractor) : ViewModel(), PaymentsModule.IInteractorDelegate {
     val payments = MutableLiveData<List<Payment>>()
 
-    fun onLoad() {
+    init {
         interactor.subscribeToStatusUpdates()
+    }
+
+    fun onLoad() {
         interactor.retrievePayments()
     }
 

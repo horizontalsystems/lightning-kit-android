@@ -34,8 +34,6 @@ class HomeActivity : AppCompatActivity(), ErrorDialog.Listener, UnlockWalletDial
         val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(viewPager)
 
-        presenter.onLoad()
-
         presenter.goToMainLiveEvent.observe(this, Observer {
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -13,7 +13,7 @@ class HomePresenter(private val interactor: HomeModule.IInteractor) : HomeModule
     val error = MutableLiveData<String?>()
     val unlockError = MutableLiveData<Throwable>()
 
-    override fun onLoad() {
+    init {
         interactor.subscribeToStatusUpdates()
     }
 

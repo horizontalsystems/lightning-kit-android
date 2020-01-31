@@ -10,9 +10,12 @@ import io.horizontalsystems.lightningkit.ILndNode
 class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : ViewModel(), ChannelsModule.IInteractorDelegate {
     val channels = MutableLiveData<List<Channel>>()
 
-    fun onLoad() {
+    init {
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToChannelUpdates()
+    }
+
+    fun onLoad() {
         interactor.listChannels()
     }
 
