@@ -3,6 +3,7 @@ package io.horizontalsystems.lightningkit
 import com.github.lightningnetwork.lnd.lnrpc.*
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
 
 class LightningKit(private val lndNode: ILndNode) {
@@ -10,9 +11,9 @@ class LightningKit(private val lndNode: ILndNode) {
     val statusObservable: Observable<ILndNode.Status>
         get() = lndNode.statusObservable
     val invoicesObservable: Observable<Invoice>
-        get() = lndNode.invoicesObservable()
+        get() = lndNode.invoicesObservable().retryWhenStatusIsSyncingOrRunning()
     val channelsObservable: Observable<ChannelEventUpdate>
-        get() = lndNode.channelsObservable()
+        get() = lndNode.channelsObservable().retryWhenStatusIsSyncingOrRunning()
 
     private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
 
@@ -72,6 +73,16 @@ class LightningKit(private val lndNode: ILndNode) {
             .flatMap {
                 lndNode.openChannel(nodePubKey, amount)
             }
+    }
+
+    private fun <T> Observable<T>.retryWhenStatusIsSyncingOrRunning(): Observable<T> {
+        return this.retryWhen {
+            it.zipWith(
+                statusObservable.filter { status ->
+                    status == ILndNode.Status.SYNCING || status == ILndNode.Status.RUNNING
+                },
+                BiFunction<Throwable, ILndNode.Status, Unit> { t1, t2 -> Unit })
+        }
     }
 
     companion object {
