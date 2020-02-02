@@ -17,7 +17,7 @@ class LightningKit(private val lndNode: ILndNode) {
 
     private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
 
-    val paymentsUpdatedObservable: Observable<Unit> = paymentsUpdatedSubject
+    val paymentsObservable: Observable<Unit> = paymentsUpdatedSubject
 
     fun getWalletBalance(): Single<WalletBalanceResponse> {
         return lndNode.getWalletBalance()

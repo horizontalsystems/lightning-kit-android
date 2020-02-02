@@ -14,13 +14,19 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
     val channelBalance = MutableLiveData<String>()
     val pendingOpenChannelBalance = MutableLiveData<String>()
 
+    private fun sync() {
+        interactor.getWalletBalance()
+        interactor.getChannelBalance()
+    }
+
     init {
         interactor.subscribeToStatusUpdates()
+        interactor.subscribeToInvoices()
+        interactor.subscribeToPayments()
     }
 
     fun onLoad() {
-        interactor.getWalletBalance()
-        interactor.getChannelBalance()
+        sync()
     }
 
     override fun onReceiveWalletBalance(balance: WalletBalanceResponse) {
@@ -45,6 +51,14 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
             interactor.getWalletBalance()
             interactor.getChannelBalance()
         }
+    }
+
+    override fun onInvoicesUpdate() {
+        sync()
+    }
+
+    override fun onPaymentsUpdate() {
+        sync()
     }
 
     override fun onCleared() {

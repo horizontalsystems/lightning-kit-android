@@ -18,6 +18,26 @@ class BalanceInteractor(private val lightningKit: LightningKit) : BalanceModule.
             }
     }
 
+    override fun subscribeToInvoices() {
+        lightningKit.invoicesObservable
+            .subscribe {
+                delegate.onInvoicesUpdate()
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun subscribeToPayments() {
+        lightningKit.paymentsObservable
+            .subscribe {
+                delegate.onPaymentsUpdate()
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun getWalletBalance() {
         lightningKit.getWalletBalance()
             .subscribe({

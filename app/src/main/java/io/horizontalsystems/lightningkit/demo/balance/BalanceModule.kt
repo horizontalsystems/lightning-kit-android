@@ -10,6 +10,8 @@ import io.horizontalsystems.lightningkit.demo.core.App
 object BalanceModule {
     interface IInteractor {
         fun subscribeToStatusUpdates()
+        fun subscribeToInvoices()
+        fun subscribeToPayments()
         fun getWalletBalance()
         fun getChannelBalance()
         fun clear()
@@ -21,6 +23,8 @@ object BalanceModule {
         fun onReceiveWalletBalance(e: Throwable)
         fun onReceiveChannelBalance(e: Throwable)
         fun onStatusUpdate(it: ILndNode.Status)
+        fun onInvoicesUpdate()
+        fun onPaymentsUpdate()
     }
 
     class Factory : ViewModelProvider.Factory {

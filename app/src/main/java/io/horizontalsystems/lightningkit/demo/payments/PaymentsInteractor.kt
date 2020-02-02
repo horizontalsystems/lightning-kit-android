@@ -31,7 +31,7 @@ class PaymentsInteractor(private val lightningKit: LightningKit) : PaymentsModul
     }
 
     override fun subscribeToPayments() {
-        lightningKit.paymentsUpdatedObservable
+        lightningKit.paymentsObservable
             .subscribe {
                 retrievePayments()
             }
