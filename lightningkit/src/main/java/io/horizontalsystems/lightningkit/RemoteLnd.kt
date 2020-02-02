@@ -171,6 +171,12 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<ConnectPeerResponse> { asyncStub.connectPeer(request, StreamObserverToSingle(it)) }
     }
 
+    override fun getOnChainAddress(): Single<NewAddressResponse> {
+        val request = NewAddressRequest.newBuilder().build()
+
+        return Single.create<NewAddressResponse> { asyncStub.newAddress(request, StreamObserverToSingle(it)) }
+    }
+
     fun validateAsync(): Single<Unit> {
         return fetchStatus()
             .flatMap {

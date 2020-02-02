@@ -3,6 +3,7 @@ package io.horizontalsystems.lightningkit.demo.balance
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.lightningnetwork.lnd.lnrpc.ChannelBalanceResponse
+import com.github.lightningnetwork.lnd.lnrpc.NewAddressResponse
 import com.github.lightningnetwork.lnd.lnrpc.WalletBalanceResponse
 import io.horizontalsystems.lightningkit.ILndNode
 
@@ -10,6 +11,7 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
     val totalBalance = MutableLiveData<String>()
     val confirmedBalance = MutableLiveData<String>()
     val unconfirmedBalance = MutableLiveData<String>()
+    val onChainAddress = MutableLiveData<String>()
 
     val channelBalance = MutableLiveData<String>()
     val pendingOpenChannelBalance = MutableLiveData<String>()
@@ -27,6 +29,7 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
 
     fun onLoad() {
         sync()
+        interactor.getOnChainAddress()
     }
 
     override fun onReceiveWalletBalance(balance: WalletBalanceResponse) {
@@ -36,6 +39,13 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
     }
 
     override fun onReceiveWalletBalance(e: Throwable) {
+    }
+
+    override fun onReceiveOnChainAddress(newAddress: NewAddressResponse) {
+        onChainAddress.postValue(newAddress.address)
+    }
+
+    override fun onReceiveOnChainAddress(e: Throwable) {
     }
 
     override fun onReceiveChannelBalance(balance: ChannelBalanceResponse) {

@@ -23,12 +23,14 @@ class BalanceFragment : Fragment() {
         val totalBalanceTextView = view.findViewById<TextView>(R.id.totalBalance)
         val confirmedBalanceTextView = view.findViewById<TextView>(R.id.confirmedBalance)
         val unconfirmedBalanceTextView = view.findViewById<TextView>(R.id.unconfirmedBalance)
+        val onChainAddress = view.findViewById<TextView>(R.id.onChainAddress)
         val channelBalanceTextView = view.findViewById<TextView>(R.id.channelBalance)
         val pendingOpenChannelBalanceTextView = view.findViewById<TextView>(R.id.pendingOpenChannelBalance)
 
         presenter.totalBalance.observe(viewLifecycleOwner, Observer { totalBalanceTextView.text = it })
         presenter.confirmedBalance.observe(viewLifecycleOwner, Observer { confirmedBalanceTextView.text = it })
         presenter.unconfirmedBalance.observe(viewLifecycleOwner, Observer { unconfirmedBalanceTextView.text = it })
+        presenter.onChainAddress.observe(viewLifecycleOwner, Observer { onChainAddress.text = it })
         presenter.channelBalance.observe(viewLifecycleOwner, Observer { channelBalanceTextView.text = it })
         presenter.pendingOpenChannelBalance.observe(viewLifecycleOwner, Observer { pendingOpenChannelBalanceTextView.text = it })
     }

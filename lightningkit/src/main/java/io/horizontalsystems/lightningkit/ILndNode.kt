@@ -44,4 +44,5 @@ interface ILndNode {
     fun decodePayReq(req: String): Single<PayReq>
     fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate>
     fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse>
+    fun getOnChainAddress(): Single<NewAddressResponse>
 }

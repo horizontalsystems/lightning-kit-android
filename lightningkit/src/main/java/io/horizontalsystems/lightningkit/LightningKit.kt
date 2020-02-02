@@ -27,6 +27,10 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.getChannelBalance()
     }
 
+    fun getOnChainAddress(): Single<NewAddressResponse> {
+        return lndNode.getOnChainAddress()
+    }
+
     fun listChannels(): Single<ListChannelsResponse> {
         return lndNode.listChannels()
     }

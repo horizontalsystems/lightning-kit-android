@@ -50,6 +50,18 @@ class BalanceInteractor(private val lightningKit: LightningKit) : BalanceModule.
             }
     }
 
+    override fun getOnChainAddress() {
+        lightningKit.getOnChainAddress()
+            .subscribe({
+                delegate.onReceiveOnChainAddress(it)
+            }, {
+                delegate.onReceiveOnChainAddress(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun getChannelBalance() {
         lightningKit.getChannelBalance()
             .subscribe({
