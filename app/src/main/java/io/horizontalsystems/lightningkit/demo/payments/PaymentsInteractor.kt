@@ -30,6 +30,16 @@ class PaymentsInteractor(private val lightningKit: LightningKit) : PaymentsModul
             }
     }
 
+    override fun subscribeToPayments() {
+        lightningKit.paymentsUpdatedObservable
+            .subscribe {
+                retrievePayments()
+            }
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun clear() {
         disposables.clear()
     }

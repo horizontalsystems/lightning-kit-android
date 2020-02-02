@@ -11,6 +11,7 @@ class PaymentsPresenter(private val interactor: PaymentsModule.IInteractor) : Vi
 
     init {
         interactor.subscribeToStatusUpdates()
+        interactor.subscribeToPayments()
     }
 
     fun onLoad() {

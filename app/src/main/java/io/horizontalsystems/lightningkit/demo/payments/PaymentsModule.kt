@@ -10,6 +10,7 @@ object PaymentsModule {
     interface IInteractor {
         fun retrievePayments()
         fun subscribeToStatusUpdates()
+        fun subscribeToPayments()
         fun clear()
     }
 

@@ -23,6 +23,9 @@ class InvoicesAdapter : RecyclerView.Adapter<InvoiceViewHolder>() {
             items[itemIndex] = item
 
             notifyItemChanged(itemIndex)
+        } else {
+            items.add(item)
+            notifyItemInserted(items.size - 1)
         }
     }
 
