@@ -28,6 +28,7 @@ interface ILndNode {
     fun getWalletBalance(): Single<WalletBalanceResponse>
     fun getChannelBalance(): Single<ChannelBalanceResponse>
     fun listChannels(): Single<ListChannelsResponse>
+    fun listClosedChannels(): Single<ClosedChannelsResponse>
     fun listPayments(): Single<ListPaymentsResponse>
     fun listInvoices(
         pendingOnly: Boolean,

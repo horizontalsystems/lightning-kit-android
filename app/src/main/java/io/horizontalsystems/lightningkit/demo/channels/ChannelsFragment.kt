@@ -31,11 +31,15 @@ class ChannelsFragment : Fragment() {
             startActivity(intent)
         }
 
-        val rvChannels = view.findViewById<RecyclerView>(R.id.channels2)
+        val rvChannels = view.findViewById<RecyclerView>(R.id.channels)
         rvChannels.adapter = channelsAdapter
 
         presenter.channels.observe(viewLifecycleOwner, Observer {
             channelsAdapter.updateChannels(it)
+        })
+
+        presenter.closedChannels.observe(viewLifecycleOwner, Observer {
+            channelsAdapter.updateClosedChannels(it)
         })
     }
 }

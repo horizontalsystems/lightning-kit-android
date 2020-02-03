@@ -71,6 +71,12 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<ListChannelsResponse> { asyncStub.listChannels(request, StreamObserverToSingle(it)) }
     }
 
+    override fun listClosedChannels(): Single<ClosedChannelsResponse> {
+        val request = ClosedChannelsRequest.newBuilder().build()
+
+        return Single.create<ClosedChannelsResponse> { asyncStub.closedChannels(request, StreamObserverToSingle(it)) }
+    }
+
     override fun decodePayReq(req: String): Single<PayReq> {
         val request = PayReqString
             .newBuilder()

@@ -1,4 +1,4 @@
-package io.horizontalsystems.lightningkit.demo.channels
+package io.horizontalsystems.lightningkit.demo.channels.viewholders
 
 import android.view.View
 import android.widget.TextView

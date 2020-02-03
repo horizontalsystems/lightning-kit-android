@@ -20,6 +20,18 @@ class ChannelsInteractor(private val lightningKit: LightningKit) : ChannelsModul
             }
     }
 
+    override fun listClosedChannels() {
+        lightningKit.listClosedChannels()
+            .subscribe({
+                delegate.onReceiveClosedChannels(it)
+            }, {
+                delegate.onReceivedError(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun subscribeToStatusUpdates() {
         lightningKit.statusObservable
             .subscribe {
