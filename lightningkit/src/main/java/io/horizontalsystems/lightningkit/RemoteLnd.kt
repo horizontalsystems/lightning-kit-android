@@ -168,6 +168,22 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Single.create<OpenStatusUpdate> { asyncStub.openChannel(openChannelRequest, StreamObserverToSingle(it)) }
     }
 
+    override fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate> {
+        val channelPointParts = channelPoint.split(':')
+
+        val channelPoint = ChannelPoint.newBuilder()
+            .setFundingTxidStr(channelPointParts.first())
+            .setOutputIndex(channelPointParts.last().toInt())
+
+        val request = CloseChannelRequest.newBuilder()
+            .setChannelPoint(channelPoint)
+            .setSatPerByte(2) // todo: extract as param
+            .setForce(forceClose)
+            .build()
+
+        return Single.create<CloseStatusUpdate> { asyncStub.closeChannel(request, StreamObserverToSingle(it)) }
+    }
+
     override fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse> {
         val lightningAddress = LightningAddress
             .newBuilder()

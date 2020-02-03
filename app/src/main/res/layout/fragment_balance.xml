@@ -28,7 +28,7 @@
                 android:id="@+id/onChainAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:selectAllOnFocus="true"
+                android:selectAllOnFocus="false"
                 android:text="@={viewModel.onChainAddress}"
                 android:textIsSelectable="true"
                 app:layout_constraintEnd_toEndOf="parent"

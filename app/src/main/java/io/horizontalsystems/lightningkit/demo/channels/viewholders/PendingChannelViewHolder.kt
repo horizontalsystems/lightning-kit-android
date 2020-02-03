@@ -12,7 +12,7 @@ class PendingChannelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
     }
 
     private val type = itemView.findViewById<TextView>(R.id.typeValue)
-    private val channelPoint = itemView.findViewById<TextView>(R.id.channelPointValue)
+    private val channelPoint = itemView.findViewById<TextView>(R.id.channelPoint)
     private val localBalance = itemView.findViewById<TextView>(R.id.localBalanceValue)
     private val remoteBalance = itemView.findViewById<TextView>(R.id.remoteBalanceValue)
 

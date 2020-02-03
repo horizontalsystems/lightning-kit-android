@@ -45,6 +45,7 @@ interface ILndNode {
     fun unlockWallet(password: String): Single<Unit>
     fun decodePayReq(req: String): Single<PayReq>
     fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate>
+    fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate>
     fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse>
     fun getOnChainAddress(): Single<NewAddressResponse>
 }

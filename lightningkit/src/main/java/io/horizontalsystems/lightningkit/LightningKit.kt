@@ -87,6 +87,10 @@ class LightningKit(private val lndNode: ILndNode) {
             }
     }
 
+    fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate> {
+        return lndNode.closeChannel(channelPoint, forceClose)
+    }
+
     private fun <T> Observable<T>.retryWhenStatusIsSyncingOrRunning(): Observable<T> {
         return this.retryWhen {
             it.zipWith(

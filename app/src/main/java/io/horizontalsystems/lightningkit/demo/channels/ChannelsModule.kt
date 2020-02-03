@@ -2,10 +2,7 @@ package io.horizontalsystems.lightningkit.demo.channels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.github.lightningnetwork.lnd.lnrpc.ChannelEventUpdate
-import com.github.lightningnetwork.lnd.lnrpc.ClosedChannelsResponse
-import com.github.lightningnetwork.lnd.lnrpc.ListChannelsResponse
-import com.github.lightningnetwork.lnd.lnrpc.PendingChannelsResponse
+import com.github.lightningnetwork.lnd.lnrpc.*
 import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.demo.core.App
 
@@ -16,6 +13,7 @@ object ChannelsModule {
         fun listPendingChannels()
         fun subscribeToStatusUpdates()
         fun subscribeToChannelUpdates()
+        fun closeChannel(channelPoint: String)
         fun clear()
     }
 
@@ -26,6 +24,9 @@ object ChannelsModule {
         fun onReceivedError(e: Throwable)
         fun onStatusUpdate(status: ILndNode.Status)
         fun onChannelsUpdate(channelEventUpdate: ChannelEventUpdate)
+        fun closeChannel(channelPoint: String)
+        fun onChannelCloseStatusUpdate(closeStatus: CloseStatusUpdate)
+        fun onChannelCloseFailure(e: Throwable)
     }
 
     class Factory : ViewModelProvider.Factory {

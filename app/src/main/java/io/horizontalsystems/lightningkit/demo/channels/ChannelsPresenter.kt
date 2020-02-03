@@ -9,6 +9,8 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
     val channels = MutableLiveData<List<Channel>>()
     val closedChannels = MutableLiveData<List<ChannelCloseSummary>>()
     val pendingChannels = MutableLiveData<PendingChannelsResponse>()
+    val channelCloseStatusUpdate = MutableLiveData<CloseStatusUpdate>()
+    val channelCloseFailure = MutableLiveData<Throwable>()
 
     init {
         interactor.subscribeToStatusUpdates()
@@ -48,6 +50,18 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
 
     override fun onChannelsUpdate(channelEventUpdate: ChannelEventUpdate) {
         sync()
+    }
+
+    override fun closeChannel(channelPoint: String) {
+        interactor.closeChannel(channelPoint)
+    }
+
+    override fun onChannelCloseStatusUpdate(closeStatus: CloseStatusUpdate) {
+        channelCloseStatusUpdate.postValue(closeStatus)
+    }
+
+    override fun onChannelCloseFailure(e: Throwable) {
+        channelCloseFailure.postValue(e)
     }
 
     override fun onCleared() {

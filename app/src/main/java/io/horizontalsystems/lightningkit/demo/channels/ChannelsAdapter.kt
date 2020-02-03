@@ -9,7 +9,7 @@ import com.github.lightningnetwork.lnd.lnrpc.PendingChannelsResponse
 import io.horizontalsystems.lightningkit.demo.channels.viewholders.*
 
 
-class ChannelsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChannelsAdapter(val listener: (channelPoint: Channel) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         const val VIEW_TYPE_CHANNEL = 1
         const val VIEW_TYPE_CLOSED_CHANNEL_SUMMARY = 2
@@ -128,7 +128,7 @@ class ChannelsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             VIEW_TYPE_CHANNEL -> {
                 val itemView = LayoutInflater.from(parent.context)
                     .inflate(ChannelViewHolder.resId, parent, false)
-                ChannelViewHolder(itemView)
+                ChannelViewHolder(itemView, listener)
             }
             VIEW_TYPE_CLOSED_CHANNEL_SUMMARY -> {
                 val itemView = LayoutInflater.from(parent.context)

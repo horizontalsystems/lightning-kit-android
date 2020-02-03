@@ -64,6 +64,18 @@ class ChannelsInteractor(private val lightningKit: LightningKit) : ChannelsModul
             }
     }
 
+    override fun closeChannel(channelPoint: String) {
+        lightningKit.closeChannel(channelPoint, false)
+            .subscribe({
+                delegate.onChannelCloseStatusUpdate(it)
+            }, {
+                delegate.onChannelCloseFailure(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun clear() {
         disposables.clear()
     }
