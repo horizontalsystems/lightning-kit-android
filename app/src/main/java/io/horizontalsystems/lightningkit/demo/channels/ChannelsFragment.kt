@@ -41,5 +41,9 @@ class ChannelsFragment : Fragment() {
         presenter.closedChannels.observe(viewLifecycleOwner, Observer {
             channelsAdapter.updateClosedChannels(it)
         })
+
+        presenter.pendingChannels.observe(viewLifecycleOwner, Observer {
+            channelsAdapter.updatePendingChannels(it)
+        })
     }
 }

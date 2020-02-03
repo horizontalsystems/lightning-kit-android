@@ -32,6 +32,18 @@ class ChannelsInteractor(private val lightningKit: LightningKit) : ChannelsModul
             }
     }
 
+    override fun listPendingChannels() {
+        lightningKit.listPendingChannels()
+            .subscribe({
+                delegate.onReceivePendingChannels(it)
+            }, {
+                delegate.onReceivedError(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun subscribeToStatusUpdates() {
         lightningKit.statusObservable
             .subscribe {

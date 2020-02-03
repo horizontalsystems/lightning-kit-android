@@ -8,15 +8,21 @@ import io.horizontalsystems.lightningkit.ILndNode
 class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : ViewModel(), ChannelsModule.IInteractorDelegate {
     val channels = MutableLiveData<List<Channel>>()
     val closedChannels = MutableLiveData<List<ChannelCloseSummary>>()
+    val pendingChannels = MutableLiveData<PendingChannelsResponse>()
 
     init {
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToChannelUpdates()
     }
 
-    fun onLoad() {
+    private fun sync() {
         interactor.listChannels()
         interactor.listClosedChannels()
+        interactor.listPendingChannels()
+    }
+
+    fun onLoad() {
+        sync()
     }
 
     // IInteractorDelegate
@@ -29,16 +35,19 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
         closedChannels.postValue(info.channelsList)
     }
 
-    override fun onReceivedError(e: Throwable) {
+    override fun onReceivePendingChannels(info: PendingChannelsResponse) {
+        pendingChannels.postValue(info)
+    }
 
+    override fun onReceivedError(e: Throwable) {
     }
 
     override fun onStatusUpdate(status: ILndNode.Status) {
-        interactor.listChannels()
+        sync()
     }
 
     override fun onChannelsUpdate(channelEventUpdate: ChannelEventUpdate) {
-        interactor.listChannels()
+        sync()
     }
 
     override fun onCleared() {

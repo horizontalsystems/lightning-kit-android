@@ -39,6 +39,10 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.listClosedChannels()
     }
 
+    fun listPendingChannels(): Single<PendingChannelsResponse> {
+        return lndNode.listPendingChannels()
+    }
+
     fun decodePayReq(req: String): Single<PayReq> {
         return lndNode.decodePayReq(req)
     }
