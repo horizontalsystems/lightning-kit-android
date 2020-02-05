@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import io.horizontalsystems.lightningkit.demo.createwallet.CreateWalletActivity
 import io.horizontalsystems.lightningkit.demo.databinding.ActivityGuestBinding
 import io.horizontalsystems.lightningkit.demo.remoteconnection.RemoteConnectionActivity
 
@@ -22,6 +23,11 @@ class GuestActivity : AppCompatActivity() {
 
         viewModel.openRemoteConnectionLiveEvent.observe(this, Observer {
             val intent = Intent(this, RemoteConnectionActivity::class.java)
+            startActivity(intent)
+        })
+
+        viewModel.openCreateLiveEvent.observe(this, Observer {
+            val intent = Intent(this, CreateWalletActivity::class.java)
             startActivity(intent)
         })
     }

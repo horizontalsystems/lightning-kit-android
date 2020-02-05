@@ -7,9 +7,10 @@ import io.horizontalsystems.lightningkit.demo.core.SingleLiveEvent
 
 class GuestPresenter : ViewModel() {
     val openRemoteConnectionLiveEvent = SingleLiveEvent<Void>()
+    val openCreateLiveEvent = SingleLiveEvent<Void>()
 
     fun create(view: View) {
-        Log.e("AAA", "creating...")
+        openCreateLiveEvent.call()
     }
 
     fun restore(view: View) {

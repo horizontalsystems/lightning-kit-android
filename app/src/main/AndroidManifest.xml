@@ -25,7 +25,7 @@
         <activity android:name=".openchannel.OpenChannelActivity" />
         <activity android:name=".send.PayActivity" />
         <activity android:name=".addinvoice.AddInvoiceActivity" />
-
+        <activity android:name=".createwallet.CreateWalletActivity" />
     </application>
 
 </manifest>

@@ -22,15 +22,28 @@ class App : Application() {
         instance = this
     }
 
+    fun isWalletSetup(): Boolean {
+        return storage.getConnectionParams() != null || storage.getLocalLndPassword() != null
+    }
+
     fun initLightningKit() {
-        val connectionParams = storage.getConnectionParams()
-        checkNotNull(connectionParams)
+        when {
+            storage.getConnectionParams() != null -> initLightningKitRemote()
+            storage.getLocalLndPassword() != null -> initLightningKitLocal()
+            else -> throw Exception("No wallet is setup")
+        }
+    }
+
+    private fun initLightningKitRemote() {
+        val connectionParams = checkNotNull(storage.getConnectionParams())
 
         lightningKit = LightningKit.remote(connectionParams.host, connectionParams.port, connectionParams.certificate, connectionParams.macaroon)
     }
 
-    fun isWalletSetup(): Boolean {
-        return storage.getConnectionParams() != null
+    private fun initLightningKitLocal() {
+        val password = checkNotNull(storage.getLocalLndPassword())
+
+        lightningKit = LightningKit.local(filesDir.absolutePath, password)
     }
 
 }
