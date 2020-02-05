@@ -26,6 +26,7 @@
         <activity android:name=".send.PayActivity" />
         <activity android:name=".addinvoice.AddInvoiceActivity" />
         <activity android:name=".createwallet.CreateWalletActivity" />
+        <activity android:name=".restorewallet.RestoreWalletActivity" />
     </application>
 
 </manifest>

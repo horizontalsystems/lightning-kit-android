@@ -102,7 +102,7 @@ class LightningKit(private val lndNode: ILndNode) {
     }
 
     companion object {
-        var lightningKitLocalLnd: LightningKit? = null
+        private var lightningKitLocalLnd: LightningKit? = null
 
         fun validateRemoteConnection(host: String, port: Int, certificate: String, macaroon: String): Single<Unit> {
             val remoteLndNode = RemoteLnd(host, port, certificate, macaroon)
@@ -128,12 +128,21 @@ class LightningKit(private val lndNode: ILndNode) {
 
         fun createLocal(filesDir: String, password: String): Single<List<String>> {
             val localLnd = LocalLnd(filesDir)
-
             lightningKitLocalLnd = LightningKit(localLnd)
 
             return localLnd.start()
                 .flatMap {
                     localLnd.createWallet(password)
+                }
+        }
+
+        fun restoreLocal(filesDir: String, password: String, mnemonicList: List<String>): Single<Unit> {
+            val localLnd = LocalLnd(filesDir)
+            lightningKitLocalLnd = LightningKit(localLnd)
+
+            return localLnd.start()
+                .flatMap {
+                    localLnd.restoreWallet(mnemonicList, password)
                 }
         }
     }

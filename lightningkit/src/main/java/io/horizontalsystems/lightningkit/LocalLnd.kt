@@ -344,6 +344,14 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             }
     }
 
+    fun restoreWallet(mnemonicList: List<String>, password: String): Single<Unit> {
+        return initWallet(mnemonicList, password)
+            .doOnSuccess {
+                scheduleStatusUpdates()
+            }
+            .map { Unit }
+    }
+
     private fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse> {
         val pw = ByteString.copyFromUtf8(password)
 

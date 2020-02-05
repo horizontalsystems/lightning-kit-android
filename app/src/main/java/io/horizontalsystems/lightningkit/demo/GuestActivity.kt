@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.horizontalsystems.lightningkit.demo.createwallet.CreateWalletActivity
 import io.horizontalsystems.lightningkit.demo.databinding.ActivityGuestBinding
 import io.horizontalsystems.lightningkit.demo.remoteconnection.RemoteConnectionActivity
+import io.horizontalsystems.lightningkit.demo.restorewallet.RestoreWalletActivity
 
 class GuestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,11 @@ class GuestActivity : AppCompatActivity() {
 
         viewModel.openCreateLiveEvent.observe(this, Observer {
             val intent = Intent(this, CreateWalletActivity::class.java)
+            startActivity(intent)
+        })
+
+        viewModel.openRestoreLiveEvent.observe(this, Observer {
+            val intent = Intent(this, RestoreWalletActivity::class.java)
             startActivity(intent)
         })
     }
