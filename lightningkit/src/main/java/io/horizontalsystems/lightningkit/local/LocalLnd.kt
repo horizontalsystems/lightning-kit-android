@@ -8,7 +8,6 @@ import io.horizontalsystems.lightningkit.hexToByteArray
 import io.horizontalsystems.lightningkit.toHexString
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.SingleEmitter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import lndmobile.Callback
@@ -373,20 +372,4 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             Lndmobile.genSeed(request.toByteArray(), CallbackToSingle(emitter) { GenSeedResponse.parseFrom(it) })
         }
     }
-}
-
-
-class CallbackToSingle<T>(private val emitter: SingleEmitter<T>, private val parseFrom: (p0: ByteArray?) -> T) : Callback {
-    override fun onResponse(p0: ByteArray?) {
-        try {
-            emitter.onSuccess(parseFrom.invoke(p0))
-        } catch (e: java.lang.Exception) {
-            emitter.onError(e)
-        }
-    }
-
-    override fun onError(p0: Exception) {
-        emitter.onError(p0)
-    }
-
 }
