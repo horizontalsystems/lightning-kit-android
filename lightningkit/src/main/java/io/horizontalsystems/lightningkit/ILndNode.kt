@@ -52,4 +52,5 @@ interface ILndNode {
     fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate>
     fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse>
     fun getOnChainAddress(): Single<NewAddressResponse>
+    fun logout(): Single<Unit>
 }

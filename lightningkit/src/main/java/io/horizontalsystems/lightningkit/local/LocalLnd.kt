@@ -13,11 +13,13 @@ import io.reactivex.subjects.PublishSubject
 import lndmobile.Callback
 import lndmobile.Lndmobile
 import lndmobile.RecvStream
+import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class LocalLnd(private val filesDir: String) : ILndNode {
+class LocalLnd(filesDir: String) : ILndNode {
     private val disposables = CompositeDisposable()
+    private val lndDir = "$filesDir/lnd"
 
     fun startAndUnlock(password: String) {
         start()
@@ -35,7 +37,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
     }
 
     fun start(): Single<Unit> {
-        val args = "--bitcoin.active --bitcoin.node=neutrino --bitcoin.mainnet --routing.assumechanvalid --no-macaroons --lnddir=$filesDir"
+        val args = "--bitcoin.active --bitcoin.node=neutrino --bitcoin.mainnet --routing.assumechanvalid --no-macaroons --lnddir=$lndDir"
 
         val rpcReady = object : Callback {
             override fun onResponse(p0: ByteArray?) = Unit
@@ -371,5 +373,24 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         return Single.create<GenSeedResponse> { emitter ->
             Lndmobile.genSeed(request.toByteArray(), CallbackToSingle(emitter) { GenSeedResponse.parseFrom(it) })
         }
+    }
+
+    override fun logout(): Single<Unit> {
+        return Single.create<Unit> { emitter ->
+            Lndmobile.stopDaemon(StopRequest.newBuilder().build().toByteArray(), CallbackToSingle(emitter) { Unit })
+        }.doOnSuccess {
+            disposables.clear()
+            deleteRecursive(File(lndDir))
+        }
+    }
+
+    private fun deleteRecursive(fileOrDirectory: File) {
+        if (fileOrDirectory.isDirectory) {
+            fileOrDirectory.listFiles()?.forEach { child ->
+                deleteRecursive(child)
+            }
+        }
+
+        fileOrDirectory.delete()
     }
 }

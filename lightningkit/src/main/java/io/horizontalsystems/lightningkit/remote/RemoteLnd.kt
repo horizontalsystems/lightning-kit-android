@@ -241,4 +241,10 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
                 Single.just(status)
             }
     }
+
+    override fun logout(): Single<Unit> {
+        return Single.fromCallable {
+            disposables.clear()
+        }
+    }
 }

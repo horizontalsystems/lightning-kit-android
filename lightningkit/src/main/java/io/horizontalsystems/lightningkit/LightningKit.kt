@@ -103,6 +103,10 @@ class LightningKit(private val lndNode: ILndNode) {
         }
     }
 
+    fun logout(): Single<Unit> {
+        return lndNode.logout()
+    }
+
     companion object {
         private var lightningKitLocalLnd: LightningKit? = null
 

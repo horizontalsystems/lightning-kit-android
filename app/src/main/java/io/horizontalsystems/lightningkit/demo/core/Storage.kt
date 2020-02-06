@@ -24,15 +24,16 @@ class Storage(private val sharedPreferences: SharedPreferences) {
         }
     }
 
-    fun clearConnectionParams() {
-        sharedPreferences.edit().remove(KEY_CONNECTION_PARAMS).apply()
-    }
-
     fun saveLocalLndPassword(password: String) {
         sharedPreferences.edit().putString(KEY_LOCAL_LND_PSWD, password).apply()
     }
 
     fun getLocalLndPassword(): String? {
         return sharedPreferences.getString(KEY_LOCAL_LND_PSWD, null)
+    }
+
+    fun clear() {
+        sharedPreferences.edit().remove(KEY_CONNECTION_PARAMS).apply()
+        sharedPreferences.edit().remove(KEY_LOCAL_LND_PSWD).apply()
     }
 }

@@ -19,8 +19,18 @@ class HomeInteractor(private val lightningKit: LightningKit, private val storage
     }
 
     override fun logout() {
-        storage.clearConnectionParams()
-        delegate.onLogout()
+        lightningKit.logout()
+            .doOnSuccess {
+                storage.clear()
+            }
+            .subscribe({
+                delegate.onLogout()
+            }, {
+
+            })
+            .let {
+                disposables.add(it)
+            }
     }
 
     override fun unlock(password: String) {
