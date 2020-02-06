@@ -1,9 +1,11 @@
-package io.horizontalsystems.lightningkit
+package io.horizontalsystems.lightningkit.remote
 
 import android.util.Base64
 import com.github.lightningnetwork.lnd.lnrpc.*
 import com.google.protobuf.ByteString
 import io.grpc.okhttp.OkHttpChannelBuilder
+import io.horizontalsystems.lightningkit.ILndNode
+import io.horizontalsystems.lightningkit.hexToByteArray
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable

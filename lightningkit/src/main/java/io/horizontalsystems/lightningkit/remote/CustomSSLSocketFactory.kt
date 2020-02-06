@@ -1,4 +1,4 @@
-package io.horizontalsystems.lightningkit
+package io.horizontalsystems.lightningkit.remote
 
 import java.io.ByteArrayInputStream
 import java.io.IOException

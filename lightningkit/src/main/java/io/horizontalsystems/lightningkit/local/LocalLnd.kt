@@ -1,8 +1,11 @@
-package io.horizontalsystems.lightningkit
+package io.horizontalsystems.lightningkit.local
 
 import android.util.Log
 import com.github.lightningnetwork.lnd.lnrpc.*
 import com.google.protobuf.ByteString
+import io.horizontalsystems.lightningkit.ILndNode
+import io.horizontalsystems.lightningkit.hexToByteArray
+import io.horizontalsystems.lightningkit.toHexString
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -35,19 +38,17 @@ class LocalLnd(private val filesDir: String) : ILndNode {
     fun start(): Single<Unit> {
         val args = "--bitcoin.active --bitcoin.node=neutrino --bitcoin.mainnet --routing.assumechanvalid --no-macaroons --lnddir=$filesDir"
 
-        val rpcReady = XCallback({
-        }, {
-            status = ILndNode.Status.ERROR(it)
-        })
+        val rpcReady = object : Callback {
+            override fun onResponse(p0: ByteArray?) = Unit
 
-        return Single.create<Unit> { emitter ->
-            Lndmobile.start(args, XCallback({
-                emitter.onSuccess(Unit)
-            }, {
-                emitter.onError(it)
-            }), rpcReady)
+            override fun onError(p0: java.lang.Exception) {
+                status = ILndNode.Status.ERROR(p0)
+            }
         }
 
+        return Single.create<Unit> { emitter ->
+            Lndmobile.start(args, CallbackToSingle<Unit>(emitter) { Unit }, rpcReady)
+        }
     }
 
     fun scheduleStatusUpdates() {
@@ -101,7 +102,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = ClosedChannelsRequest.newBuilder().build()
 
         return Single.create<ClosedChannelsResponse> {
-            Lndmobile.closedChannels(request.toByteArray(), Xxx(it) { ClosedChannelsResponse.parseFrom(it) })
+            Lndmobile.closedChannels(request.toByteArray(), CallbackToSingle(it) { ClosedChannelsResponse.parseFrom(it) })
         }
     }
 
@@ -109,7 +110,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = NewAddressRequest.newBuilder().build()
 
         return Single.create<NewAddressResponse> {
-            Lndmobile.newAddress(request.toByteArray(), Xxx(it) { NewAddressResponse.parseFrom(it) })
+            Lndmobile.newAddress(request.toByteArray(), CallbackToSingle(it) { NewAddressResponse.parseFrom(it) })
         }
     }
 
@@ -117,7 +118,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = GetInfoRequest.newBuilder().build()
 
         return Single.create<GetInfoResponse> {
-            Lndmobile.getInfo(request.toByteArray(), Xxx(it) { GetInfoResponse.parseFrom(it) })
+            Lndmobile.getInfo(request.toByteArray(), CallbackToSingle(it) { GetInfoResponse.parseFrom(it) })
         }
     }
 
@@ -125,7 +126,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = WalletBalanceRequest.newBuilder().build()
 
         return Single.create<WalletBalanceResponse> {
-            Lndmobile.walletBalance(request.toByteArray(), Xxx(it) { WalletBalanceResponse.parseFrom(it) })
+            Lndmobile.walletBalance(request.toByteArray(), CallbackToSingle(it) { WalletBalanceResponse.parseFrom(it) })
         }
     }
 
@@ -133,7 +134,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = ChannelBalanceRequest.newBuilder().build()
 
         return Single.create<ChannelBalanceResponse> {
-            Lndmobile.channelBalance(request.toByteArray(), Xxx(it) { ChannelBalanceResponse.parseFrom(it) })
+            Lndmobile.channelBalance(request.toByteArray(), CallbackToSingle(it) { ChannelBalanceResponse.parseFrom(it) })
         }
     }
 
@@ -141,7 +142,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = ListChannelsRequest.newBuilder().build()
 
         return Single.create<ListChannelsResponse> {
-            Lndmobile.listChannels(request.toByteArray(), Xxx(it) { ListChannelsResponse.parseFrom(it) })
+            Lndmobile.listChannels(request.toByteArray(), CallbackToSingle(it) { ListChannelsResponse.parseFrom(it) })
         }
     }
 
@@ -149,7 +150,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = PendingChannelsRequest.newBuilder().build()
 
         return Single.create<PendingChannelsResponse> {
-            Lndmobile.pendingChannels(request.toByteArray(), Xxx(it) { PendingChannelsResponse.parseFrom(it) })
+            Lndmobile.pendingChannels(request.toByteArray(), CallbackToSingle(it) { PendingChannelsResponse.parseFrom(it) })
         }
     }
 
@@ -185,7 +186,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
         val request = ListPaymentsRequest.newBuilder().build()
 
         return Single.create<ListPaymentsResponse> {
-            Lndmobile.listPayments(request.toByteArray(), Xxx(it) { ListPaymentsResponse.parseFrom(it) })
+            Lndmobile.listPayments(request.toByteArray(), CallbackToSingle(it) { ListPaymentsResponse.parseFrom(it) })
         }
     }
 
@@ -204,7 +205,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<ListInvoiceResponse> {
-            Lndmobile.listInvoices(request.toByteArray(), Xxx(it) { ListInvoiceResponse.parseFrom(it) })
+            Lndmobile.listInvoices(request.toByteArray(), CallbackToSingle(it) { ListInvoiceResponse.parseFrom(it) })
         }
     }
 
@@ -252,7 +253,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<SendResponse> {
-            Lndmobile.sendPaymentSync(request.toByteArray(), Xxx(it) { SendResponse.parseFrom(it) })
+            Lndmobile.sendPaymentSync(request.toByteArray(), CallbackToSingle(it) { SendResponse.parseFrom(it) })
         }
     }
 
@@ -264,7 +265,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<AddInvoiceResponse> {
-            Lndmobile.addInvoice(invoice.toByteArray(), Xxx(it) { AddInvoiceResponse.parseFrom(it) })
+            Lndmobile.addInvoice(invoice.toByteArray(), CallbackToSingle(it) { AddInvoiceResponse.parseFrom(it) })
         }
     }
 
@@ -274,9 +275,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<Unit> {
-            Lndmobile.unlockWallet(request.toByteArray(), Xxx(it) {
-                Unit
-            })
+            Lndmobile.unlockWallet(request.toByteArray(), CallbackToSingle(it) { Unit })
         }
     }
 
@@ -287,7 +286,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<PayReq> {
-            Lndmobile.decodePayReq(request.toByteArray(), Xxx(it) { PayReq.parseFrom(it) })
+            Lndmobile.decodePayReq(request.toByteArray(), CallbackToSingle(it) { PayReq.parseFrom(it) })
         }
     }
 
@@ -325,7 +324,7 @@ class LocalLnd(private val filesDir: String) : ILndNode {
             .build()
 
         return Single.create<ConnectPeerResponse> {
-            Lndmobile.connectPeer(request.toByteArray(), Xxx(it) { ConnectPeerResponse.parseFrom(it) })
+            Lndmobile.connectPeer(request.toByteArray(), CallbackToSingle(it) { ConnectPeerResponse.parseFrom(it) })
         }
     }
 
@@ -365,19 +364,19 @@ class LocalLnd(private val filesDir: String) : ILndNode {
 
                 Lndmobile.initWallet(
                     initWalletRequest.toByteArray(),
-                    Xxx(emitter) { InitWalletResponse.getDefaultInstance() })
+                    CallbackToSingle(emitter) { InitWalletResponse.getDefaultInstance() })
             }
     }
 
     private fun genSeed(request: GenSeedRequest): Single<GenSeedResponse> {
         return Single.create<GenSeedResponse> { emitter ->
-            Lndmobile.genSeed(request.toByteArray(), Xxx(emitter) { GenSeedResponse.parseFrom(it) })
+            Lndmobile.genSeed(request.toByteArray(), CallbackToSingle(emitter) { GenSeedResponse.parseFrom(it) })
         }
     }
 }
 
 
-class Xxx<T>(private val emitter: SingleEmitter<T>, private val parseFrom: (p0: ByteArray?) -> T) : Callback {
+class CallbackToSingle<T>(private val emitter: SingleEmitter<T>, private val parseFrom: (p0: ByteArray?) -> T) : Callback {
     override fun onResponse(p0: ByteArray?) {
         try {
             emitter.onSuccess(parseFrom.invoke(p0))
@@ -390,17 +389,4 @@ class Xxx<T>(private val emitter: SingleEmitter<T>, private val parseFrom: (p0: 
         emitter.onError(p0)
     }
 
-}
-
-class XCallback(
-    private val onResponse: (response: ByteArray?) -> Unit,
-    private val onError: (error: java.lang.Exception) -> Unit
-) : Callback {
-    override fun onResponse(p0: ByteArray?) {
-        onResponse.invoke(p0)
-    }
-
-    override fun onError(p0: java.lang.Exception) {
-        onError.invoke(p0)
-    }
 }

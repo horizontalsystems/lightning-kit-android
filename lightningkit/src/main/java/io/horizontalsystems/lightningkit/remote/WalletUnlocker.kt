@@ -1,4 +1,4 @@
-package io.horizontalsystems.lightningkit
+package io.horizontalsystems.lightningkit.remote
 
 import com.github.lightningnetwork.lnd.lnrpc.UnlockWalletRequest
 import com.github.lightningnetwork.lnd.lnrpc.UnlockWalletResponse
@@ -6,7 +6,6 @@ import com.github.lightningnetwork.lnd.lnrpc.WalletUnlockerGrpc
 import com.google.protobuf.ByteString
 import io.grpc.Channel
 import io.reactivex.Single
-import java.lang.Exception
 
 class WalletUnlocker(channel: Channel, macaroonCallCredential: MacaroonCallCredential) {
     object UnlockingException: Exception("Wallet unlock already in progress") {}

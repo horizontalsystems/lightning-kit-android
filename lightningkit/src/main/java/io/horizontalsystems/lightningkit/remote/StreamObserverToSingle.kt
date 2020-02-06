@@ -1,4 +1,4 @@
-package io.horizontalsystems.lightningkit
+package io.horizontalsystems.lightningkit.remote
 
 import io.grpc.stub.StreamObserver
 import io.reactivex.SingleEmitter

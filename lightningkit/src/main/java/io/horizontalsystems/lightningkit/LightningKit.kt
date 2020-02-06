@@ -1,6 +1,8 @@
 package io.horizontalsystems.lightningkit
 
 import com.github.lightningnetwork.lnd.lnrpc.*
+import io.horizontalsystems.lightningkit.local.LocalLnd
+import io.horizontalsystems.lightningkit.remote.RemoteLnd
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
