@@ -19,6 +19,10 @@ interface ILndNode {
             override fun hashCode(): Int {
                 return throwable.hashCode()
             }
+
+            override fun toString(): String {
+                return "Error: ${throwable.message}"
+            }
         }
     }
 
