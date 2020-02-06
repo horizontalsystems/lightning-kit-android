@@ -1,181 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <data>
+    <TextView
+        android:id="@+id/onChainAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:selectAllOnFocus="false"
+        android:textIsSelectable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="bc1q7h7mks6fp9dzyvrt2w75mcw0v56jmlynf0g78p" />
 
-        <variable
-            name="viewModel"
-            type="io.horizontalsystems.lightningkit.demo.balance.BalancePresenter" />
-    </data>
+    <TextView
+        android:id="@+id/totalBalanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Total Balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onChainAddress" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/totalBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/totalBalanceLabel"
+        tools:text="5000" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/onChainAddressCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+    <TextView
+        android:id="@+id/confirmedBalanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Confirmed Balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/totalBalanceLabel" />
 
-            <TextView
-                android:id="@+id/onChainAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:selectAllOnFocus="false"
-                android:text="@={viewModel.onChainAddress}"
-                android:textIsSelectable="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/confirmedBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/confirmedBalanceLabel"
+        tools:text="2000" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/totalBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/onChainAddressCard">
+    <TextView
+        android:id="@+id/unconfirmedBalanceLabel"
+        android:layout_width="137dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Unconfirmed Balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmedBalanceLabel" />
 
-            <TextView
-                android:id="@+id/totalBalanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/unconfirmedBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/unconfirmedBalanceLabel"
+        tools:text="10000" />
 
-            <TextView
-                android:id="@+id/totalBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@={viewModel.totalBalance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/channelBalanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Channel Balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/unconfirmedBalanceLabel" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/confirmedBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/totalBalanceCard">
+    <TextView
+        android:id="@+id/channelBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/channelBalanceLabel"
+        tools:text="12340" />
 
-            <TextView
-                android:id="@+id/confirmedBalanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Confirmed Balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/pendingOpenChannelBalanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Pending Open Channel Balance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/channelBalanceLabel" />
 
-            <TextView
-                android:id="@+id/confirmedBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@={viewModel.confirmedBalance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/pendingOpenChannelBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/pendingOpenChannelBalanceLabel"
+        tools:text="99898900" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/unconfirmedBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmedBalanceCard">
-
-            <TextView
-                android:id="@+id/unconfirmedBalanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Unconfirmed Balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/unconfirmedBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@={viewModel.unconfirmedBalance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/channelBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/unconfirmedBalanceCard">
-
-            <TextView
-                android:id="@+id/channelBalanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Channel Balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/channelBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@={viewModel.channelBalance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/pendingOpenChannelBalanceCard"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelBalanceCard">
-
-            <TextView
-                android:id="@+id/pendingOpenChannelBalanceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pending Open Channel Balance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/pendingOpenChannelBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@={viewModel.pendingOpenChannelBalance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
-
+</androidx.constraintlayout.widget.ConstraintLayout>
