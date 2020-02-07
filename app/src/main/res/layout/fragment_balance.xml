@@ -52,7 +52,7 @@
 
     <TextView
         android:id="@+id/unconfirmedBalanceLabel"
-        android:layout_width="137dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Unconfirmed Balance"
