@@ -69,5 +69,5 @@ dependencies {
 
     compileOnly 'com.google.api.grpc:proto-google-common-protos:1.17.0'
 
-    implementation files('libs/Lndmobile.aar')
+    api files('libs/Lndmobile.aar')
 }
