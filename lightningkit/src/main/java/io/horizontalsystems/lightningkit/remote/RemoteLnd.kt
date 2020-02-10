@@ -245,6 +245,9 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
     override fun logout(): Single<Unit> {
         return Single.fromCallable {
             disposables.clear()
+            channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS)
+
+            Unit
         }
     }
 }

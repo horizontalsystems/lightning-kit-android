@@ -3,6 +3,7 @@ package io.horizontalsystems.lightningkit.demo.home
 import io.horizontalsystems.lightningkit.LightningKit
 import io.horizontalsystems.lightningkit.demo.core.Storage
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class HomeInteractor(private val lightningKit: LightningKit, private val storage: Storage) : HomeModule.IInteractor {
     lateinit var delegate: HomeModule.IInteractorDelegate
@@ -20,6 +21,7 @@ class HomeInteractor(private val lightningKit: LightningKit, private val storage
 
     override fun logout() {
         lightningKit.logout()
+            .subscribeOn(Schedulers.io())
             .doOnSuccess {
                 storage.clear()
             }
