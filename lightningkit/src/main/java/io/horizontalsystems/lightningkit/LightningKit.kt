@@ -74,7 +74,7 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.unlockWallet(password)
     }
 
-    fun openChannel(nodePubKey: String, amount: Long, nodeAddress: String): Single<OpenStatusUpdate> {
+    fun openChannel(nodePubKey: String, amount: Long, nodeAddress: String): Observable<OpenStatusUpdate> {
         return lndNode.connect(nodeAddress, nodePubKey)
             .map { Unit }
             .onErrorResumeNext {
@@ -84,12 +84,12 @@ class LightningKit(private val lndNode: ILndNode) {
                     Single.error(it)
                 }
             }
-            .flatMap {
+            .flatMapObservable {
                 lndNode.openChannel(nodePubKey, amount)
             }
     }
 
-    fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate> {
+    fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate> {
         return lndNode.closeChannel(channelPoint, forceClose)
     }
 

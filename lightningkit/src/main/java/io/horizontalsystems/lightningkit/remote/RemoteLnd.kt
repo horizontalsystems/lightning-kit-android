@@ -160,17 +160,17 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
         return Observable.create<ChannelEventUpdate> { asyncStub.subscribeChannelEvents(channelEventSubscription, StreamObserverToObserver(it)) }
     }
 
-    override fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate> {
+    override fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate> {
         val openChannelRequest = OpenChannelRequest.newBuilder()
             .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
             .setSatPerByte(2) // todo: extract as param
             .setLocalFundingAmount(amount)
             .build()
 
-        return Single.create<OpenStatusUpdate> { asyncStub.openChannel(openChannelRequest, StreamObserverToSingle(it)) }
+        return Observable.create<OpenStatusUpdate> { asyncStub.openChannel(openChannelRequest, StreamObserverToObserver(it)) }
     }
 
-    override fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate> {
+    override fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate> {
         val channelPointParts = channelPoint.split(':')
 
         val channelPoint = ChannelPoint.newBuilder()
@@ -183,7 +183,7 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
             .setForce(forceClose)
             .build()
 
-        return Single.create<CloseStatusUpdate> { asyncStub.closeChannel(request, StreamObserverToSingle(it)) }
+        return Observable.create<CloseStatusUpdate> { asyncStub.closeChannel(request, StreamObserverToObserver(it)) }
     }
 
     override fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse> {

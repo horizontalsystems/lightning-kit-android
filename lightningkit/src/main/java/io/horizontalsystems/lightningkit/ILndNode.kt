@@ -48,8 +48,8 @@ interface ILndNode {
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse>
     fun unlockWallet(password: String): Single<Unit>
     fun decodePayReq(req: String): Single<PayReq>
-    fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate>
-    fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate>
+    fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate>
+    fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate>
     fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse>
     fun getOnChainAddress(): Single<NewAddressResponse>
     fun logout(): Single<Unit>

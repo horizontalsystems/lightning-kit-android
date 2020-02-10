@@ -155,7 +155,7 @@ class LocalLnd(filesDir: String) : ILndNode {
         }
     }
 
-    override fun closeChannel(channelPoint: String, forceClose: Boolean): Single<CloseStatusUpdate> {
+    override fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate> {
         val channelPointParts = channelPoint.split(':')
 
         val channelPoint = ChannelPoint.newBuilder()
@@ -168,10 +168,10 @@ class LocalLnd(filesDir: String) : ILndNode {
             .setForce(forceClose)
             .build()
 
-        return Single.create<CloseStatusUpdate> { emitter ->
+        return Observable.create<CloseStatusUpdate> { emitter ->
             Lndmobile.closeChannel(request.toByteArray(), object : RecvStream {
                 override fun onResponse(p0: ByteArray?) {
-                    emitter.onSuccess(CloseStatusUpdate.parseFrom(p0))
+                    emitter.onNext(CloseStatusUpdate.parseFrom(p0))
                 }
 
                 override fun onError(p0: java.lang.Exception) {
@@ -291,17 +291,17 @@ class LocalLnd(filesDir: String) : ILndNode {
         }
     }
 
-    override fun openChannel(nodePubKey: String, amount: Long): Single<OpenStatusUpdate> {
+    override fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate> {
         val openChannelRequest = OpenChannelRequest.newBuilder()
             .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
             .setSatPerByte(2) // todo: extract as param
             .setLocalFundingAmount(amount)
             .build()
 
-        return Single.create<OpenStatusUpdate> { emitter ->
+        return Observable.create<OpenStatusUpdate> { emitter ->
             Lndmobile.openChannel(openChannelRequest.toByteArray(), object : RecvStream {
                 override fun onResponse(p0: ByteArray?) {
-                    emitter.onSuccess(OpenStatusUpdate.parseFrom(p0))
+                    emitter.onNext(OpenStatusUpdate.parseFrom(p0))
                 }
 
                 override fun onError(p0: java.lang.Exception) {
