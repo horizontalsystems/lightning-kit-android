@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.horizontalsystems.lightningkit.demo.core.SingleLiveEvent
+import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 
 class RemoteConnectionPresenter(private val interactor: RemoteConnectionModule.IInteractor) : ViewModel(),
     RemoteConnectionModule.IInteractorDelegate {
@@ -69,16 +70,16 @@ ZfD6wdSSgNsNh1iIHbxXbdVjGYU=""".trimIndent()
             return
         }
 
-        val connectionParams =
-            ConnectionParams(host.value!!, port.value!!.toInt(), certificate.value!!, macaroon.value!!)
+        val credentials =
+            RemoteLndCredentials(host.value!!, port.value!!.toInt(), certificate.value!!, macaroon.value!!)
 
-        interactor.validateConnection(connectionParams)
+        interactor.validateConnection(credentials)
     }
 
     // IInteractorDelegate
 
-    override fun onValidationSuccess(connectionParams: ConnectionParams) {
-        interactor.saveConnectionParams(connectionParams)
+    override fun onValidationSuccess(remoteLndCredentials: RemoteLndCredentials) {
+        interactor.saveRemoteLndCredentials(remoteLndCredentials)
         navigateToHome.postValue(Unit)
     }
 
@@ -92,5 +93,3 @@ ZfD6wdSSgNsNh1iIHbxXbdVjGYU=""".trimIndent()
         interactor.clear()
     }
 }
-
-data class ConnectionParams(val host: String, val port: Int, val certificate: String, val macaroon: String)

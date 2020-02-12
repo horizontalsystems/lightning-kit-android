@@ -1,26 +1,26 @@
 package io.horizontalsystems.lightningkit.demo.core
 
 import android.content.SharedPreferences
-import io.horizontalsystems.lightningkit.demo.remoteconnection.ConnectionParams
+import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 
 class Storage(private val sharedPreferences: SharedPreferences) {
     companion object {
-        private const val KEY_CONNECTION_PARAMS = "CONNECTION_PARAMS"
+        private const val KEY_REMOTE_LND_CREDENTIALS = "REMOTE_LND_CREDENTIALS"
         private const val KEY_LOCAL_LND_PSWD = "LOCAL_LND_PSWD"
     }
 
-    fun saveConnectionParams(connectionParams: ConnectionParams) {
-        val serialized = with(connectionParams) {
+    fun saveRemoteLndCredentials(remoteLndCredentials: RemoteLndCredentials) {
+        val serialized = with(remoteLndCredentials) {
             listOf(host, port.toString(), certificate, macaroon).joinToString("|")
         }
 
-        sharedPreferences.edit().putString(KEY_CONNECTION_PARAMS, serialized).apply()
+        sharedPreferences.edit().putString(KEY_REMOTE_LND_CREDENTIALS, serialized).apply()
     }
 
-    fun getConnectionParams() : ConnectionParams? {
-        return sharedPreferences.getString(KEY_CONNECTION_PARAMS, null)?.let {
+    fun getRemoteLndCredentials() : RemoteLndCredentials? {
+        return sharedPreferences.getString(KEY_REMOTE_LND_CREDENTIALS, null)?.let {
             val chunks = it.split("|")
-            ConnectionParams(chunks[0], chunks[1].toInt(), chunks[2], chunks[3])
+            RemoteLndCredentials(chunks[0], chunks[1].toInt(), chunks[2], chunks[3])
         }
     }
 
@@ -33,7 +33,7 @@ class Storage(private val sharedPreferences: SharedPreferences) {
     }
 
     fun clear() {
-        sharedPreferences.edit().remove(KEY_CONNECTION_PARAMS).apply()
+        sharedPreferences.edit().remove(KEY_REMOTE_LND_CREDENTIALS).apply()
         sharedPreferences.edit().remove(KEY_LOCAL_LND_PSWD).apply()
     }
 }

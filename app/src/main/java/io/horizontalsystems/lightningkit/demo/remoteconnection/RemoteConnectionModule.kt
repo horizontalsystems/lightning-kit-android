@@ -3,16 +3,17 @@ package io.horizontalsystems.lightningkit.demo.remoteconnection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.horizontalsystems.lightningkit.demo.core.App
+import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 
 object RemoteConnectionModule {
     interface IInteractor {
-        fun validateConnection(connectionParams: ConnectionParams)
-        fun saveConnectionParams(connectionParams: ConnectionParams)
+        fun validateConnection(remoteLndCredentials: RemoteLndCredentials)
+        fun saveRemoteLndCredentials(remoteLndCredentials: RemoteLndCredentials)
         fun clear()
     }
 
     interface IInteractorDelegate {
-        fun onValidationSuccess(connectionParams: ConnectionParams)
+        fun onValidationSuccess(remoteLndCredentials: RemoteLndCredentials)
         fun onValidationFailed(e: Throwable)
     }
 

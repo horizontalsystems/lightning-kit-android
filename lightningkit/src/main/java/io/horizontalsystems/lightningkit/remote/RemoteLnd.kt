@@ -13,7 +13,7 @@ import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndNode {
+class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
 
     private val statusSubject = PublishSubject.create<ILndNode.Status>()
     override val statusObservable = statusSubject
@@ -26,12 +26,12 @@ class RemoteLnd(host: String, port: Int, cert: String, macaroon: String) : ILndN
             }
         }
 
-    private val sslCertStr = Base64.decode(cert, Base64.DEFAULT)
+    private val sslCertStr = Base64.decode(remoteLndCredentials.certificate, Base64.DEFAULT)
     private val sslFactory = CustomSSLSocketFactory.create(sslCertStr)
 
-    private val macaroonCallCredential = MacaroonCallCredential(macaroon)
+    private val macaroonCallCredential = MacaroonCallCredential(remoteLndCredentials.macaroon)
     private val channel = OkHttpChannelBuilder
-        .forAddress(host, port)
+        .forAddress(remoteLndCredentials.host, remoteLndCredentials.port)
         .sslSocketFactory(sslFactory)
         .build()
 

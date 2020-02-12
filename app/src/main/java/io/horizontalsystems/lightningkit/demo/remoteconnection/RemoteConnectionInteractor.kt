@@ -2,17 +2,18 @@ package io.horizontalsystems.lightningkit.demo.remoteconnection
 
 import io.horizontalsystems.lightningkit.LightningKit
 import io.horizontalsystems.lightningkit.demo.core.Storage
+import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 import io.reactivex.disposables.CompositeDisposable
 
 class RemoteConnectionInteractor(private val storage: Storage) : RemoteConnectionModule.IInteractor {
     lateinit var delegate: RemoteConnectionModule.IInteractorDelegate
     private val disposables = CompositeDisposable()
 
-    override fun validateConnection(connectionParams: ConnectionParams) {
+    override fun validateConnection(remoteLndCredentials: RemoteLndCredentials) {
         LightningKit
-            .validateRemoteConnection(connectionParams.host, connectionParams.port, connectionParams.certificate, connectionParams.macaroon)
+            .validateRemoteConnection(remoteLndCredentials)
             .subscribe({
-                delegate.onValidationSuccess(connectionParams)
+                delegate.onValidationSuccess(remoteLndCredentials)
             }, {
                 delegate.onValidationFailed(it)
             })
@@ -21,8 +22,8 @@ class RemoteConnectionInteractor(private val storage: Storage) : RemoteConnectio
             }
     }
 
-    override fun saveConnectionParams(connectionParams: ConnectionParams) {
-        storage.saveConnectionParams(connectionParams)
+    override fun saveRemoteLndCredentials(remoteLndCredentials: RemoteLndCredentials) {
+        storage.saveRemoteLndCredentials(remoteLndCredentials)
     }
 
     override fun clear() {

@@ -23,21 +23,21 @@ class App : Application() {
     }
 
     fun isWalletSetup(): Boolean {
-        return storage.getConnectionParams() != null || storage.getLocalLndPassword() != null
+        return storage.getRemoteLndCredentials() != null || storage.getLocalLndPassword() != null
     }
 
     fun initLightningKit() {
         when {
-            storage.getConnectionParams() != null -> initLightningKitRemote()
+            storage.getRemoteLndCredentials() != null -> initLightningKitRemote()
             storage.getLocalLndPassword() != null -> initLightningKitLocal()
             else -> throw Exception("No wallet is setup")
         }
     }
 
     private fun initLightningKitRemote() {
-        val connectionParams = checkNotNull(storage.getConnectionParams())
+        val remoteLndCredentials = checkNotNull(storage.getRemoteLndCredentials())
 
-        lightningKit = LightningKit.remote(connectionParams.host, connectionParams.port, connectionParams.certificate, connectionParams.macaroon)
+        lightningKit = LightningKit.remote(remoteLndCredentials)
     }
 
     private fun initLightningKitLocal() {
