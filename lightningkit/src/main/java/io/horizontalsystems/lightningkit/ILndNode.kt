@@ -43,6 +43,7 @@ interface ILndNode {
     ): Single<ListInvoiceResponse>
     fun invoicesObservable(): Observable<Invoice>
     fun channelsObservable(): Observable<ChannelEventUpdate>
+    fun transactionsObservable(): Observable<Transaction>
 
     fun payInvoice(invoice: String): Single<SendResponse>
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse>

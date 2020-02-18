@@ -17,6 +17,18 @@ class LightningKit(private val lndNode: ILndNode) {
         get() = lndNode.invoicesObservable().retryWhenStatusIsSyncingOrRunning()
     val channelsObservable: Observable<ChannelEventUpdate>
         get() = lndNode.channelsObservable().retryWhenStatusIsSyncingOrRunning()
+    val transactionsObservable: Observable<Transaction>
+        get() = lndNode.transactionsObservable().retryWhenStatusIsSyncingOrRunning()
+    val balanceObservable: Observable<Unit>
+        get() {
+            val observables = listOf(
+                paymentsObservable,
+                invoicesObservable.filter { it.state == Invoice.InvoiceState.SETTLED }.map { Unit },
+                transactionsObservable.map { Unit }
+            )
+
+            return Observable.merge(observables)
+        }
 
     private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
 

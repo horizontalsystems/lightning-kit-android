@@ -5,7 +5,6 @@ import com.github.lightningnetwork.lnd.lnrpc.*
 import com.google.protobuf.ByteString
 import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.hexToByteArray
-import io.horizontalsystems.lightningkit.toHexString
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -236,8 +235,25 @@ class LocalLnd(filesDir: String) : ILndNode {
         return Observable.create<ChannelEventUpdate> { emitter ->
             Lndmobile.subscribeChannelEvents(channelEventSubscription.toByteArray(), object : RecvStream {
                 override fun onResponse(p0: ByteArray?) {
-                    Log.e("AAA", "ChannelEventUpdate: ${p0?.toHexString()}")
                     emitter.onNext(ChannelEventUpdate.parseFrom(p0))
+                }
+
+                override fun onError(p0: java.lang.Exception) {
+                    emitter.onError(p0)
+                }
+            })
+        }
+    }
+
+    override fun transactionsObservable(): Observable<Transaction> {
+        val request = GetTransactionsRequest
+            .newBuilder()
+            .build()
+
+        return Observable.create<Transaction> { emitter ->
+            Lndmobile.subscribeTransactions(request.toByteArray(), object : RecvStream {
+                override fun onResponse(p0: ByteArray?) {
+                    emitter.onNext(Transaction.parseFrom(p0))
                 }
 
                 override fun onError(p0: java.lang.Exception) {

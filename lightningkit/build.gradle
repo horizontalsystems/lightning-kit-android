@@ -70,4 +70,7 @@ dependencies {
     compileOnly 'com.google.api.grpc:proto-google-common-protos:1.17.0'
 
     api files('libs/Lndmobile.aar')
+
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation "org.mockito:mockito-inline:3.2.4"
 }

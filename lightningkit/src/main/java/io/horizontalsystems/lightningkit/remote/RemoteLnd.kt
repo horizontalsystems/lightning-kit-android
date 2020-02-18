@@ -160,6 +160,14 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
         return Observable.create<ChannelEventUpdate> { asyncStub.subscribeChannelEvents(channelEventSubscription, StreamObserverToObserver(it)) }
     }
 
+    override fun transactionsObservable(): Observable<Transaction> {
+        val request = GetTransactionsRequest
+            .newBuilder()
+            .build()
+
+        return Observable.create<Transaction> { asyncStub.subscribeTransactions(request, StreamObserverToObserver(it)) }
+    }
+
     override fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate> {
         val openChannelRequest = OpenChannelRequest.newBuilder()
             .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
