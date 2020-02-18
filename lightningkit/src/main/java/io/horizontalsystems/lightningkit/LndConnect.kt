@@ -23,7 +23,10 @@ object LndConnect {
             val (key, value) =  it.split("=")
 
             when(key) {
-                "cert" -> certificate = value
+                "cert" -> {
+                    val certBytes = BaseEncoding.base64Url().decode(value)
+                    certificate = BaseEncoding.base64().encode(certBytes)
+                }
                 "macaroon" -> {
                     val macaroonBytes = BaseEncoding.base64Url().decode(value)
                     macaroon = BaseEncoding.base16().encode(macaroonBytes)
