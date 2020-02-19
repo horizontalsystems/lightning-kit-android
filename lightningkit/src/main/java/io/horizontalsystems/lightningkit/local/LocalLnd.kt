@@ -11,7 +11,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import lndmobile.Callback
 import lndmobile.Lndmobile
-import lndmobile.RecvStream
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -167,16 +166,8 @@ class LocalLnd(filesDir: String) : ILndNode {
             .setForce(forceClose)
             .build()
 
-        return Observable.create<CloseStatusUpdate> { emitter ->
-            Lndmobile.closeChannel(request.toByteArray(), object : RecvStream {
-                override fun onResponse(p0: ByteArray?) {
-                    emitter.onNext(CloseStatusUpdate.parseFrom(p0))
-                }
-
-                override fun onError(p0: java.lang.Exception) {
-                    emitter.onError(p0)
-                }
-            })
+        return Observable.create<CloseStatusUpdate> {
+            Lndmobile.closeChannel(request.toByteArray(), RecvStreamToObservable(it) { CloseStatusUpdate.parseFrom(it) })
         }
 
     }
@@ -214,34 +205,18 @@ class LocalLnd(filesDir: String) : ILndNode {
             .newBuilder()
             .build()
 
-        return Observable.create<Invoice> { emitter ->
-            Lndmobile.subscribeInvoices(request.toByteArray(), object : RecvStream {
-                override fun onResponse(p0: ByteArray?) {
-                    emitter.onNext(Invoice.parseFrom(p0))
-                }
-
-                override fun onError(p0: java.lang.Exception) {
-                    emitter.onError(p0)
-                }
-            })
+        return Observable.create<Invoice> {
+            Lndmobile.subscribeInvoices(request.toByteArray(), RecvStreamToObservable(it) { Invoice.parseFrom(it) })
         }
     }
 
     override fun channelsObservable(): Observable<ChannelEventUpdate> {
-        val channelEventSubscription = ChannelEventSubscription
+        val subscription = ChannelEventSubscription
             .newBuilder()
             .build()
 
-        return Observable.create<ChannelEventUpdate> { emitter ->
-            Lndmobile.subscribeChannelEvents(channelEventSubscription.toByteArray(), object : RecvStream {
-                override fun onResponse(p0: ByteArray?) {
-                    emitter.onNext(ChannelEventUpdate.parseFrom(p0))
-                }
-
-                override fun onError(p0: java.lang.Exception) {
-                    emitter.onError(p0)
-                }
-            })
+        return Observable.create<ChannelEventUpdate> {
+            Lndmobile.subscribeChannelEvents(subscription.toByteArray(), RecvStreamToObservable(it) { ChannelEventUpdate.parseFrom(it) })
         }
     }
 
@@ -250,16 +225,8 @@ class LocalLnd(filesDir: String) : ILndNode {
             .newBuilder()
             .build()
 
-        return Observable.create<Transaction> { emitter ->
-            Lndmobile.subscribeTransactions(request.toByteArray(), object : RecvStream {
-                override fun onResponse(p0: ByteArray?) {
-                    emitter.onNext(Transaction.parseFrom(p0))
-                }
-
-                override fun onError(p0: java.lang.Exception) {
-                    emitter.onError(p0)
-                }
-            })
+        return Observable.create<Transaction> {
+            Lndmobile.subscribeTransactions(request.toByteArray(), RecvStreamToObservable(it) { Transaction.parseFrom(it) })
         }
     }
 
@@ -308,22 +275,14 @@ class LocalLnd(filesDir: String) : ILndNode {
     }
 
     override fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate> {
-        val openChannelRequest = OpenChannelRequest.newBuilder()
+        val request = OpenChannelRequest.newBuilder()
             .setNodePubkey(ByteString.copyFrom(nodePubKey.hexToByteArray()))
             .setSatPerByte(2) // todo: extract as param
             .setLocalFundingAmount(amount)
             .build()
 
-        return Observable.create<OpenStatusUpdate> { emitter ->
-            Lndmobile.openChannel(openChannelRequest.toByteArray(), object : RecvStream {
-                override fun onResponse(p0: ByteArray?) {
-                    emitter.onNext(OpenStatusUpdate.parseFrom(p0))
-                }
-
-                override fun onError(p0: java.lang.Exception) {
-                    emitter.onError(p0)
-                }
-            })
+        return Observable.create<OpenStatusUpdate> {
+            Lndmobile.openChannel(request.toByteArray(), RecvStreamToObservable(it) { OpenStatusUpdate.parseFrom(it) })
         }
 
     }
