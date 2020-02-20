@@ -210,7 +210,9 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
     }
 
     override fun getOnChainAddress(): Single<NewAddressResponse> {
-        val request = NewAddressRequest.newBuilder().build()
+        val request = NewAddressRequest.newBuilder()
+            .setType(AddressType.UNUSED_WITNESS_PUBKEY_HASH)
+            .build()
 
         return Single.create<NewAddressResponse> { asyncStub.newAddress(request, StreamObserverToSingle(it)) }
     }
