@@ -9,14 +9,11 @@ import io.horizontalsystems.lightningkit.hexToByteArray
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
-
-    private val statusSubject = PublishSubject.create<ILndNode.Status>()
-    override val statusObservable = statusSubject
 
     var status: ILndNode.Status = ILndNode.Status.CONNECTING
         set(value) {
@@ -25,6 +22,9 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
                 statusSubject.onNext(value)
             }
         }
+
+    private val statusSubject = BehaviorSubject.createDefault(status)
+    override val statusObservable = statusSubject
 
     private val sslCertStr = Base64.decode(remoteLndCredentials.certificate, Base64.DEFAULT)
     private val sslFactory = CustomSSLSocketFactory.create(sslCertStr)

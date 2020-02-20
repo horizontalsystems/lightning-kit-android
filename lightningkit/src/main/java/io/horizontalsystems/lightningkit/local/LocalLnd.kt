@@ -1,6 +1,5 @@
 package io.horizontalsystems.lightningkit.local
 
-import android.util.Log
 import com.github.lightningnetwork.lnd.lnrpc.*
 import com.google.protobuf.ByteString
 import io.horizontalsystems.lightningkit.ILndNode
@@ -8,7 +7,7 @@ import io.horizontalsystems.lightningkit.hexToByteArray
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import lndmobile.Callback
 import lndmobile.Lndmobile
 import java.io.File
@@ -84,18 +83,16 @@ class LocalLnd(filesDir: String) : ILndNode {
             }
     }
 
-
-    private val statusSubject = PublishSubject.create<ILndNode.Status>()
-    override val statusObservable = statusSubject
-
     var status: ILndNode.Status = ILndNode.Status.CONNECTING
         set(value) {
-            Log.e("AAA", "Setting status $value")
             if (field != value) {
                 field = value
                 statusSubject.onNext(value)
             }
         }
+
+    private val statusSubject = BehaviorSubject.createDefault(status)
+    override val statusObservable = statusSubject
 
     override fun listClosedChannels(): Single<ClosedChannelsResponse> {
         val request = ClosedChannelsRequest.newBuilder().build()
