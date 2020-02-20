@@ -19,20 +19,30 @@ class LightningKit(private val lndNode: ILndNode) {
         get() = lndNode.channelsObservable().retryWhenStatusIsSyncingOrRunning()
     val transactionsObservable: Observable<Transaction>
         get() = lndNode.transactionsObservable().retryWhenStatusIsSyncingOrRunning()
-    val balanceObservable: Observable<Unit>
+    val walletBalanceObservable: Observable<WalletBalanceResponse>
+        get() = transactionsObservable.flatMap {
+            getWalletBalance().toObservable()
+        }
+    val channelBalanceObservable: Observable<ChannelBalanceResponse>
         get() {
             val observables = listOf(
                 paymentsObservable,
                 invoicesObservable.filter { it.state == Invoice.InvoiceState.SETTLED }.map { Unit },
-                transactionsObservable.map { Unit }
+                channelsObservable.map { Unit }
             )
 
             return Observable.merge(observables)
+                .flatMap {
+                    getChannelBalance().toObservable()
+                }
         }
 
     private val paymentsUpdatedSubject = PublishSubject.create<Unit>()
 
-    val paymentsObservable: Observable<Unit> = paymentsUpdatedSubject
+    val paymentsObservable: Observable<ListPaymentsResponse> = paymentsUpdatedSubject
+        .flatMap {
+            listPayments().toObservable()
+        }
 
     fun getWalletBalance(): Single<WalletBalanceResponse> {
         return lndNode.getWalletBalance()
