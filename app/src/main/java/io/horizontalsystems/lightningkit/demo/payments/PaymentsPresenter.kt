@@ -9,12 +9,18 @@ import io.horizontalsystems.lightningkit.ILndNode
 class PaymentsPresenter(private val interactor: PaymentsModule.IInteractor) : ViewModel(), PaymentsModule.IInteractorDelegate {
     val payments = MutableLiveData<List<Payment>>()
 
-    init {
+    private var inited = false
+
+    private fun init() {
+        if (inited) return
+        inited = true
+
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToPayments()
     }
 
     fun onLoad() {
+        init()
         interactor.retrievePayments()
     }
 

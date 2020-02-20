@@ -21,13 +21,19 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
         interactor.getChannelBalance()
     }
 
-    init {
+    private var inited = false
+
+    private fun init() {
+        if (inited) return
+        inited = true
+
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToInvoices()
         interactor.subscribeToPayments()
     }
 
     fun onLoad() {
+        init()
         sync()
         interactor.getOnChainAddress()
     }

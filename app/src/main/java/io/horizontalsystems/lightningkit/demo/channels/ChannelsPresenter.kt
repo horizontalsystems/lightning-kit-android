@@ -12,7 +12,12 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
     val channelCloseStatusUpdate = MutableLiveData<CloseStatusUpdate>()
     val channelCloseFailure = MutableLiveData<Throwable>()
 
-    init {
+    private var inited = false
+
+    private fun init() {
+        if (inited) return
+        inited = true
+
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToChannelUpdates()
     }
@@ -24,6 +29,7 @@ class ChannelsPresenter(private val interactor: ChannelsModule.IInteractor) : Vi
     }
 
     fun onLoad() {
+        init()
         sync()
     }
 

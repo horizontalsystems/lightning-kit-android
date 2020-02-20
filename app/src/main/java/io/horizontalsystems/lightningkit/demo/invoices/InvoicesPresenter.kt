@@ -11,12 +11,18 @@ class InvoicesPresenter(private val interactor: InvoicesModule.IInteractor) : Vi
     val invoicesUpdate = MutableLiveData<List<Invoice>>()
     val invoiceUpdate = MutableLiveData<Invoice>()
 
-    init {
+    private var inited = false
+
+    private fun init() {
+        if (inited) return
+        inited = true
+
         interactor.subscribeToStatusUpdates()
         interactor.subscribeToInvoices()
     }
 
     fun onLoad() {
+        init()
         interactor.retrieveInvoices()
     }
 

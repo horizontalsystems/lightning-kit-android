@@ -13,8 +13,17 @@ class HomePresenter(private val interactor: HomeModule.IInteractor) : HomeModule
     val error = MutableLiveData<String?>()
     val unlockError = MutableLiveData<Throwable>()
 
-    init {
+    private var inited = false
+
+    private fun init() {
+        if (inited) return
+        inited = true
+
         interactor.subscribeToStatusUpdates()
+    }
+
+    fun onLoad() {
+        init()
     }
 
     override fun onStatusUpdate(status: ILndNode.Status) {
