@@ -26,7 +26,7 @@ class LightningKit(private val lndNode: ILndNode) {
     val channelBalanceObservable: Observable<ChannelBalanceResponse>
         get() {
             val observables = listOf(
-                paymentsObservable,
+                paymentsUpdatedSubject,
                 invoicesObservable.filter { it.state == Invoice.InvoiceState.SETTLED }.map { Unit },
                 channelsObservable.map { Unit }
             )
