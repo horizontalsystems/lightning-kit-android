@@ -26,4 +26,8 @@ class TransactionsPresenter(val interactor: TransactionsModule.IInteractor) : Tr
     override fun didFetchTransactions(transactions: List<Transaction>) {
         this.transactions.postValue(transactions)
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

@@ -24,4 +24,8 @@ class CreateWalletInteractor(private val filesDir: String, private val storage: 
                 disposables.add(it)
             }
     }
+
+    override fun clear() {
+        disposables.clear()
+    }
 }

@@ -7,6 +7,7 @@ import io.horizontalsystems.lightningkit.demo.core.App
 object CreateWalletModule {
     interface IInteractor {
         fun createWallet()
+        fun clear()
     }
 
     interface IInteractorDelegate {

@@ -17,4 +17,8 @@ class CreateWalletPresenter(private val interactor: CreateWalletInteractor) : Cr
     override fun onSeedGenerateError(throwable: Throwable) {
         TODO("not implemented")
     }
+
+    override fun onCleared() {
+        interactor.clear()
+    }
 }

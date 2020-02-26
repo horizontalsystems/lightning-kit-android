@@ -26,4 +26,8 @@ class TransactionsInteractor(val lightningKit: LightningKit) : TransactionsModul
             disposables.add(it)
         }
     }
+
+    override fun clear() {
+        disposables.clear()
+    }
 }

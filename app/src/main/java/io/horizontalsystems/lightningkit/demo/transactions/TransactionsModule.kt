@@ -10,6 +10,7 @@ object TransactionsModule {
     interface IInteractor {
         fun fetchTransactions()
         fun subscribeToTransactions()
+        fun clear()
     }
 
     interface IInteractorDelegate {
