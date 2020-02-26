@@ -8,7 +8,7 @@ import io.horizontalsystems.lightningkit.demo.R
 
 class PaymentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     companion object {
-        const val resId = R.layout.view_holder_payment
+        const val resId = R.layout.view_holder_item
     }
 
     private val description = itemView.findViewById<TextView>(R.id.description)
