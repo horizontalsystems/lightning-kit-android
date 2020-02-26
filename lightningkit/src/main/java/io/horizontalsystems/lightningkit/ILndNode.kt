@@ -41,6 +41,7 @@ interface ILndNode {
         limit: Long,
         reversed: Boolean
     ): Single<ListInvoiceResponse>
+    fun getTransactions(): Single<TransactionDetails>
     fun invoicesObservable(): Observable<Invoice>
     fun channelsObservable(): Observable<ChannelEventUpdate>
     fun transactionsObservable(): Observable<Transaction>

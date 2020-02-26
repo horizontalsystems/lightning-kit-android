@@ -144,6 +144,14 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
         return Single.create<ListInvoiceResponse> { asyncStub.listInvoices(request, StreamObserverToSingle(it)) }
     }
 
+    override fun getTransactions(): Single<TransactionDetails> {
+        val request = GetTransactionsRequest
+            .newBuilder()
+            .build()
+
+        return Single.create<TransactionDetails> { asyncStub.getTransactions(request, StreamObserverToSingle(it)) }
+    }
+
     override fun invoicesObservable(): Observable<Invoice> {
         val request = InvoiceSubscription
             .newBuilder()

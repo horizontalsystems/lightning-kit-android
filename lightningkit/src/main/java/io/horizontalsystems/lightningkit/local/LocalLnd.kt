@@ -171,7 +171,6 @@ class LocalLnd(filesDir: String) : ILndNode {
 
     }
 
-
     override fun listPayments(): Single<ListPaymentsResponse> {
         val request = ListPaymentsRequest.newBuilder().build()
 
@@ -196,6 +195,16 @@ class LocalLnd(filesDir: String) : ILndNode {
 
         return Single.create<ListInvoiceResponse> {
             Lndmobile.listInvoices(request.toByteArray(), CallbackToSingle(it) { ListInvoiceResponse.parseFrom(it) })
+        }
+    }
+
+    override fun getTransactions(): Single<TransactionDetails> {
+        val request = GetTransactionsRequest
+            .newBuilder()
+            .build()
+
+        return Single.create<TransactionDetails> {
+            Lndmobile.getTransactions(request.toByteArray(), CallbackToSingle(it) { TransactionDetails.parseFrom(it) })
         }
     }
 

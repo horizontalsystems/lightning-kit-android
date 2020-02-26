@@ -93,6 +93,10 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.listInvoices(pending_only, offset, limit, reversed)
     }
 
+    fun getTransactions(): Single<TransactionDetails> {
+        return lndNode.getTransactions()
+    }
+
     fun unlockWallet(password: String): Single<Unit> {
         return lndNode.unlockWallet(password)
     }
