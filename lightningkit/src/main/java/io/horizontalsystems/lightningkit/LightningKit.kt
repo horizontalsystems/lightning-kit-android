@@ -134,9 +134,37 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.logout()
     }
 
-    companion object {
-        private var lightningKitLocalLnd: LightningKit? = null
+    // LocalLnd methods
 
+    fun start(password: String) {
+        if (lndNode is LocalLnd) {
+            lndNode.startAndUnlock(password)
+        }
+    }
+
+    fun create(password: String): Single<List<String>> {
+        return if (lndNode is LocalLnd) {
+            lndNode.start()
+                .flatMap {
+                    lndNode.createWallet(password)
+                }
+        } else {
+            Single.error(IllegalStateException("Cannot Init Remote Node"))
+        }
+    }
+
+    fun restore(mnemonicList: List<String>, password: String): Single<Unit> {
+        return if (lndNode is LocalLnd) {
+            lndNode.start()
+                .flatMap {
+                    lndNode.restoreWallet(mnemonicList, password)
+                }
+        } else {
+            Single.error(IllegalStateException("Cannot Init Remote Node"))
+        }
+    }
+
+    companion object {
         fun validateRemoteConnection(remoteLndCredentials: RemoteLndCredentials): Single<Unit> {
             val remoteLndNode = RemoteLnd(remoteLndCredentials)
 
@@ -150,33 +178,10 @@ class LightningKit(private val lndNode: ILndNode) {
             return LightningKit(remoteLndNode)
         }
 
-        fun local(filesDir: String, password: String): LightningKit {
-            lightningKitLocalLnd?.let { return it }
-
+        fun local(filesDir: String): LightningKit {
             val localLnd = LocalLnd(filesDir)
-            localLnd.startAndUnlock(password)
 
             return LightningKit(localLnd)
-        }
-
-        fun createLocal(filesDir: String, password: String): Single<List<String>> {
-            val localLnd = LocalLnd(filesDir)
-            lightningKitLocalLnd = LightningKit(localLnd)
-
-            return localLnd.start()
-                .flatMap {
-                    localLnd.createWallet(password)
-                }
-        }
-
-        fun restoreLocal(filesDir: String, password: String, mnemonicList: List<String>): Single<Unit> {
-            val localLnd = LocalLnd(filesDir)
-            lightningKitLocalLnd = LightningKit(localLnd)
-
-            return localLnd.start()
-                .flatMap {
-                    localLnd.restoreWallet(mnemonicList, password)
-                }
         }
     }
 }

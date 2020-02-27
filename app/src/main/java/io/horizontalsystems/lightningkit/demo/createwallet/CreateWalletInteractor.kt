@@ -1,6 +1,7 @@
 package io.horizontalsystems.lightningkit.demo.createwallet
 
 import io.horizontalsystems.lightningkit.LightningKit
+import io.horizontalsystems.lightningkit.demo.core.App
 import io.horizontalsystems.lightningkit.demo.core.Storage
 import io.reactivex.disposables.CompositeDisposable
 
@@ -11,9 +12,13 @@ class CreateWalletInteractor(private val filesDir: String, private val storage: 
     override fun createWallet() {
         val password = "somesuperstrongpw"
 
-        LightningKit.createLocal(filesDir, password)
+        val lightningKit = LightningKit.local(filesDir)
+
+        lightningKit.create(password)
             .doOnSuccess {
                 storage.saveLocalLndPassword(password)
+
+                App.lightningKit = lightningKit
             }
             .subscribe({
                 delegate.onCreateWallet(it)

@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import io.horizontalsystems.lightningkit.demo.MainActivity
 import io.horizontalsystems.lightningkit.demo.R
+import io.horizontalsystems.lightningkit.demo.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_create_wallet.*
 
 class CreateWalletActivity : AppCompatActivity() {
@@ -27,7 +27,8 @@ class CreateWalletActivity : AppCompatActivity() {
         })
 
         next.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }

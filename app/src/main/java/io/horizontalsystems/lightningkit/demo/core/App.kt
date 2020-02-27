@@ -43,7 +43,8 @@ class App : Application() {
     private fun initLightningKitLocal() {
         val password = checkNotNull(storage.getLocalLndPassword())
 
-        lightningKit = LightningKit.local(filesDir.absolutePath, password)
+        lightningKit = LightningKit.local(filesDir.absolutePath)
+        lightningKit.start(password)
     }
 
 }

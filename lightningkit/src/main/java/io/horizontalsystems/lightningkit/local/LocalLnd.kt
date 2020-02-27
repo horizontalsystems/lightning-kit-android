@@ -321,6 +321,9 @@ class LocalLnd(filesDir: String) : ILndNode {
                     .doOnSuccess {
                         scheduleStatusUpdates()
                     }
+                    .doOnError {
+                        status = ILndNode.Status.ERROR(it)
+                    }
                     .map {
                         genSeedResponse.cipherSeedMnemonicList
                     }
@@ -331,6 +334,9 @@ class LocalLnd(filesDir: String) : ILndNode {
         return initWallet(mnemonicList, password)
             .doOnSuccess {
                 scheduleStatusUpdates()
+            }
+            .doOnError {
+                status = ILndNode.Status.ERROR(it)
             }
             .map { Unit }
     }

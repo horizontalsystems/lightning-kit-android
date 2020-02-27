@@ -1,6 +1,7 @@
 package io.horizontalsystems.lightningkit.demo.restorewallet
 
 import io.horizontalsystems.lightningkit.LightningKit
+import io.horizontalsystems.lightningkit.demo.core.App
 import io.horizontalsystems.lightningkit.demo.core.Storage
 import io.reactivex.disposables.CompositeDisposable
 
@@ -12,9 +13,13 @@ class RestoreWalletInteractor(val filesDir: String, val storage: Storage) :
     override fun restoreWallet(mnemonicList: List<String>) {
         val password = "superstrongpw"
 
-        LightningKit.restoreLocal(filesDir, password, mnemonicList)
+        val lightningKit = LightningKit.local(filesDir)
+
+        lightningKit.restore(mnemonicList, password)
             .doOnSuccess {
                 storage.saveLocalLndPassword(password)
+
+                App.lightningKit = lightningKit
             }
             .subscribe({
                 delegate.onRestoreWallet()
