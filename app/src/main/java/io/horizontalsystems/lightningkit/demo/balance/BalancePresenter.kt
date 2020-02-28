@@ -15,6 +15,7 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
 
     val channelBalance = MutableLiveData<String>()
     val pendingOpenChannelBalance = MutableLiveData<String>()
+    val statusLiveData = MutableLiveData<ILndNode.Status>()
 
     private fun sync() {
         interactor.getWalletBalance()
@@ -63,6 +64,7 @@ class BalancePresenter(private val interactor: BalanceModule.IInteractor) : View
     }
 
     override fun onStatusUpdate(status: ILndNode.Status) {
+        statusLiveData.postValue(status)
         if (status == ILndNode.Status.RUNNING) {
             interactor.getWalletBalance()
             interactor.getChannelBalance()

@@ -101,4 +101,21 @@
         app:layout_constraintTop_toTopOf="@+id/pendingOpenChannelBalanceLabel"
         tools:text="99898900" />
 
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pendingOpenChannelBalanceLabel" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Syncing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/statusLabel" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

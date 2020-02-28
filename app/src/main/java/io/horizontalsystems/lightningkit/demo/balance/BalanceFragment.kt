@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import io.horizontalsystems.lightningkit.demo.R
+import kotlinx.android.synthetic.main.fragment_balance.*
 
 class BalanceFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -33,6 +34,9 @@ class BalanceFragment : Fragment() {
         presenter.onChainAddress.observe(viewLifecycleOwner, Observer { onChainAddress.text = it })
         presenter.channelBalance.observe(viewLifecycleOwner, Observer { channelBalanceTextView.text = it })
         presenter.pendingOpenChannelBalance.observe(viewLifecycleOwner, Observer { pendingOpenChannelBalanceTextView.text = it })
+        presenter.statusLiveData.observe(viewLifecycleOwner, Observer {
+            status.text = it.javaClass.simpleName
+        })
     }
 
 }
