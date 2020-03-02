@@ -1,6 +1,8 @@
 package io.horizontalsystems.lightningkit.demo.remoteconnection
 
+import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.LightningKit
+import io.horizontalsystems.lightningkit.demo.core.App
 import io.horizontalsystems.lightningkit.demo.core.Storage
 import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 import io.reactivex.disposables.CompositeDisposable
@@ -10,20 +12,17 @@ class RemoteConnectionInteractor(private val storage: Storage) : RemoteConnectio
     private val disposables = CompositeDisposable()
 
     override fun validateConnection(remoteLndCredentials: RemoteLndCredentials) {
-        LightningKit
-            .validateRemoteConnection(remoteLndCredentials)
-            .subscribe({
-                delegate.onValidationSuccess(remoteLndCredentials)
-            }, {
-                delegate.onValidationFailed(it)
-            })
-            .let {
-                disposables.add(it)
-            }
-    }
+        val lightningKit = LightningKit.remote(remoteLndCredentials)
+        val status = lightningKit.status
 
-    override fun saveRemoteLndCredentials(remoteLndCredentials: RemoteLndCredentials) {
-        storage.saveRemoteLndCredentials(remoteLndCredentials)
+        if (status !is ILndNode.Status.ERROR) {
+            storage.saveRemoteLndCredentials(remoteLndCredentials)
+            App.lightningKit = lightningKit
+
+            delegate.onValidationSuccess(remoteLndCredentials)
+        } else {
+            delegate.onValidationFailed(status.throwable)
+        }
     }
 
     override fun clear() {

@@ -18,16 +18,15 @@ class LocalLnd(filesDir: String) : ILndNode {
     private val disposables = CompositeDisposable()
     private val lndDir = "$filesDir/lnd"
 
-    fun startAndUnlock(password: String) {
+    init {
         start()
-            .flatMap {
-                unlockWallet(password)
-            }
-            .subscribe({
+            .doOnSuccess {
                 scheduleStatusUpdates()
-            }, {
+            }
+            .doOnError {
                 status = ILndNode.Status.ERROR(it)
-            })
+            }
+            .subscribe()
             .let {
                 disposables.add(it)
             }
@@ -83,7 +82,7 @@ class LocalLnd(filesDir: String) : ILndNode {
             }
     }
 
-    var status: ILndNode.Status = ILndNode.Status.CONNECTING
+    override var status: ILndNode.Status = ILndNode.Status.CONNECTING
         set(value) {
             if (field != value) {
                 field = value
@@ -271,6 +270,14 @@ class LocalLnd(filesDir: String) : ILndNode {
         }
     }
 
+    override fun unlockWalletBlocking(password: String) {
+        unlockWallet(password)
+            .subscribe()
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun decodePayReq(req: String): Single<PayReq> {
         val request = PayReqString
             .newBuilder()
@@ -312,53 +319,21 @@ class LocalLnd(filesDir: String) : ILndNode {
         }
     }
 
-    fun createWallet(password: String): Single<List<String>> {
+    override fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse> {
+        val request = InitWalletRequest
+            .newBuilder()
+            .setWalletPassword(ByteString.copyFromUtf8(password))
+            .addAllCipherSeedMnemonic(mnemonicList)
+            .build()
+
+        return Single.create<InitWalletResponse> { emitter ->
+            Lndmobile.initWallet(request.toByteArray(), CallbackToSingle(emitter) { InitWalletResponse.getDefaultInstance() })
+        }
+    }
+
+    override fun genSeed(): Single<GenSeedResponse> {
         val request = GenSeedRequest.newBuilder().build()
 
-        return genSeed(request)
-            .flatMap { genSeedResponse ->
-                initWallet(genSeedResponse.cipherSeedMnemonicList, password)
-                    .doOnSuccess {
-                        scheduleStatusUpdates()
-                    }
-                    .doOnError {
-                        status = ILndNode.Status.ERROR(it)
-                    }
-                    .map {
-                        genSeedResponse.cipherSeedMnemonicList
-                    }
-            }
-    }
-
-    fun restoreWallet(mnemonicList: List<String>, password: String): Single<Unit> {
-        return initWallet(mnemonicList, password)
-            .doOnSuccess {
-                scheduleStatusUpdates()
-            }
-            .doOnError {
-                status = ILndNode.Status.ERROR(it)
-            }
-            .map { Unit }
-    }
-
-    private fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse> {
-        val pw = ByteString.copyFromUtf8(password)
-
-        return Single
-            .create<InitWalletResponse> { emitter ->
-                val initWalletRequest = InitWalletRequest
-                    .newBuilder()
-                    .setWalletPassword(pw)
-                    .addAllCipherSeedMnemonic(mnemonicList)
-                    .build()
-
-                Lndmobile.initWallet(
-                    initWalletRequest.toByteArray(),
-                    CallbackToSingle(emitter) { InitWalletResponse.getDefaultInstance() })
-            }
-    }
-
-    private fun genSeed(request: GenSeedRequest): Single<GenSeedResponse> {
         return Single.create<GenSeedResponse> { emitter ->
             Lndmobile.genSeed(request.toByteArray(), CallbackToSingle(emitter) { GenSeedResponse.parseFrom(it) })
         }

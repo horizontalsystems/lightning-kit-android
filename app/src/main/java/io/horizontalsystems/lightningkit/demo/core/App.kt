@@ -44,7 +44,7 @@ class App : Application() {
         val password = checkNotNull(storage.getLocalLndPassword())
 
         lightningKit = LightningKit.local(filesDir.absolutePath)
-        lightningKit.start(password)
+        lightningKit.unlockWalletBlocking(password)
     }
 
 }

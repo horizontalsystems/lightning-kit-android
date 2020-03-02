@@ -18,20 +18,22 @@ class CreateWalletActivity : AppCompatActivity() {
         val presenter = ViewModelProvider(this, CreateWalletModule.Factory()).get(CreateWalletPresenter::class.java)
         presenter.onLoad()
 
-        presenter.mnemonicList.observe(this, Observer {
-            mnemonicList.text = it.mapIndexed { index, s ->
+        presenter.mnemonicList.observe(this, Observer { words ->
+            mnemonicList.text = words.mapIndexed { index, s ->
                 "${index + 1}: $s"
             }.joinToString("\n")
 
             next.isEnabled = true
+            next.setOnClickListener {
+                presenter.initWallet(words)
+            }
         })
 
-        next.setOnClickListener {
+        presenter.walletInit.observe(this, Observer {
             val intent = Intent(this, HomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
-        }
+        })
     }
-
 }

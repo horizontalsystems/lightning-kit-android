@@ -10,18 +10,17 @@ class RestoreWalletInteractor(val filesDir: String, val storage: Storage) :
     lateinit var delegate: RestoreWalletPresenter
     private val disposables = CompositeDisposable()
 
+    val lightningKit by lazy { LightningKit.local(filesDir) }
+
     override fun restoreWallet(mnemonicList: List<String>) {
         val password = "superstrongpw"
 
-        val lightningKit = LightningKit.local(filesDir)
-
-        lightningKit.restore(mnemonicList, password)
-            .doOnSuccess {
+        lightningKit.initWallet(mnemonicList, password)
+            .subscribe({
                 storage.saveLocalLndPassword(password)
 
                 App.lightningKit = lightningKit
-            }
-            .subscribe({
+
                 delegate.onRestoreWallet()
             }, {
                 delegate.onError(it)

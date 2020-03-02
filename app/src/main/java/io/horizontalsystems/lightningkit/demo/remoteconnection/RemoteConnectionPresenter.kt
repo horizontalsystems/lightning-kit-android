@@ -79,7 +79,6 @@ ZfD6wdSSgNsNh1iIHbxXbdVjGYU=""".trimIndent()
     // IInteractorDelegate
 
     override fun onValidationSuccess(remoteLndCredentials: RemoteLndCredentials) {
-        interactor.saveRemoteLndCredentials(remoteLndCredentials)
         navigateToHome.postValue(Unit)
     }
 

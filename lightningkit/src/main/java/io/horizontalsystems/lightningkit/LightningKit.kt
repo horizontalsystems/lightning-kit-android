@@ -13,6 +13,8 @@ class LightningKit(private val lndNode: ILndNode) {
 
     val statusObservable: Observable<ILndNode.Status>
         get() = lndNode.statusObservable
+    val status
+        get() = lndNode.status
     val invoicesObservable: Observable<Invoice>
         get() = lndNode.invoicesObservable().retryWhenStatusIsSyncingOrRunning()
     val channelsObservable: Observable<ChannelEventUpdate>
@@ -101,6 +103,10 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.unlockWallet(password)
     }
 
+    fun unlockWalletBlocking(password: String) {
+        lndNode.unlockWalletBlocking(password)
+    }
+
     fun openChannel(nodePubKey: String, amount: Long, nodeAddress: String): Observable<OpenStatusUpdate> {
         return lndNode.connect(nodeAddress, nodePubKey)
             .map { Unit }
@@ -134,53 +140,24 @@ class LightningKit(private val lndNode: ILndNode) {
         return lndNode.logout()
     }
 
+    fun genSeed(): Single<List<String>> {
+        return lndNode.genSeed().map { it.cipherSeedMnemonicList }
+    }
+
+    fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse> {
+        return lndNode.initWallet(mnemonicList, password)
+    }
+
     // LocalLnd methods
 
-    fun start(password: String) {
-        if (lndNode is LocalLnd) {
-            lndNode.startAndUnlock(password)
-        }
-    }
-
-    fun create(password: String): Single<List<String>> {
-        return if (lndNode is LocalLnd) {
-            lndNode.start()
-                .flatMap {
-                    lndNode.createWallet(password)
-                }
-        } else {
-            Single.error(IllegalStateException("Cannot Init Remote Node"))
-        }
-    }
-
-    fun restore(mnemonicList: List<String>, password: String): Single<Unit> {
-        return if (lndNode is LocalLnd) {
-            lndNode.start()
-                .flatMap {
-                    lndNode.restoreWallet(mnemonicList, password)
-                }
-        } else {
-            Single.error(IllegalStateException("Cannot Init Remote Node"))
-        }
-    }
-
     companion object {
-        fun validateRemoteConnection(remoteLndCredentials: RemoteLndCredentials): Single<Unit> {
-            val remoteLndNode = RemoteLnd(remoteLndCredentials)
-
-            return remoteLndNode.validateAsync()
-        }
-
         fun remote(remoteLndCredentials: RemoteLndCredentials): LightningKit {
             val remoteLndNode = RemoteLnd(remoteLndCredentials)
-            remoteLndNode.scheduleStatusUpdates()
-
             return LightningKit(remoteLndNode)
         }
 
         fun local(filesDir: String): LightningKit {
             val localLnd = LocalLnd(filesDir)
-
             return LightningKit(localLnd)
         }
     }

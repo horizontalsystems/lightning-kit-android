@@ -3,6 +3,7 @@ package io.horizontalsystems.lightningkit.remote
 import android.util.Base64
 import com.github.lightningnetwork.lnd.lnrpc.*
 import com.google.protobuf.ByteString
+import io.grpc.ManagedChannel
 import io.grpc.okhttp.OkHttpChannelBuilder
 import io.horizontalsystems.lightningkit.ILndNode
 import io.horizontalsystems.lightningkit.hexToByteArray
@@ -12,10 +13,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLSocketFactory
 
 class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
-
-    var status: ILndNode.Status = ILndNode.Status.CONNECTING
+    override var status: ILndNode.Status = ILndNode.Status.CONNECTING
         set(value) {
             if (field != value) {
                 field = value
@@ -27,17 +28,37 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
     override val statusObservable = statusSubject
 
     private val sslCertStr = Base64.decode(remoteLndCredentials.certificate, Base64.DEFAULT)
-    private val sslFactory = CustomSSLSocketFactory.create(sslCertStr)
+    private lateinit var sslFactory: SSLSocketFactory
 
     private val macaroonCallCredential = MacaroonCallCredential(remoteLndCredentials.macaroon)
-    private val channel = OkHttpChannelBuilder
-        .forAddress(remoteLndCredentials.host, remoteLndCredentials.port)
-        .sslSocketFactory(sslFactory)
-        .build()
+    private lateinit var channel: ManagedChannel
 
-    private val asyncStub = LightningGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
-    private var walletUnlocker = WalletUnlocker(channel, macaroonCallCredential)
+    private lateinit var asyncRpcStub: LightningGrpc.LightningStub
+    private lateinit var asyncWalletUnlockerStub: WalletUnlockerGrpc.WalletUnlockerStub
+
+    private lateinit var walletUnlocker: WalletUnlocker
     private val disposables = CompositeDisposable()
+
+    init {
+        try {
+            sslFactory = CustomSSLSocketFactory.create(sslCertStr)
+            channel = OkHttpChannelBuilder
+                .forAddress(remoteLndCredentials.host, remoteLndCredentials.port)
+                .sslSocketFactory(sslFactory)
+                .build()
+
+            asyncRpcStub = LightningGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
+            asyncWalletUnlockerStub = WalletUnlockerGrpc.newStub(channel).withCallCredentials(macaroonCallCredential)
+
+            walletUnlocker = WalletUnlocker(asyncWalletUnlockerStub)
+
+            status = fetchStatus().blockingGet()
+
+            scheduleStatusUpdates()
+        } catch (e: Exception) {
+            status = ILndNode.Status.ERROR(e)
+        }
+    }
 
     fun scheduleStatusUpdates() {
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
@@ -52,37 +73,37 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
     override fun getInfo(): Single<GetInfoResponse> {
         val request = GetInfoRequest.newBuilder().build()
 
-        return Single.create<GetInfoResponse> { asyncStub.getInfo(request, StreamObserverToSingle(it)) }
+        return Single.create<GetInfoResponse> { asyncRpcStub.getInfo(request, StreamObserverToSingle(it)) }
     }
 
     override fun getWalletBalance(): Single<WalletBalanceResponse> {
         val request = WalletBalanceRequest.newBuilder().build()
 
-        return Single.create<WalletBalanceResponse> { asyncStub.walletBalance(request, StreamObserverToSingle(it)) }
+        return Single.create<WalletBalanceResponse> { asyncRpcStub.walletBalance(request, StreamObserverToSingle(it)) }
     }
 
     override fun getChannelBalance(): Single<ChannelBalanceResponse> {
         val request = ChannelBalanceRequest.newBuilder().build()
 
-        return Single.create<ChannelBalanceResponse> { asyncStub.channelBalance(request, StreamObserverToSingle(it)) }
+        return Single.create<ChannelBalanceResponse> { asyncRpcStub.channelBalance(request, StreamObserverToSingle(it)) }
     }
 
     override fun listChannels(): Single<ListChannelsResponse> {
         val request = ListChannelsRequest.newBuilder().build()
 
-        return Single.create<ListChannelsResponse> { asyncStub.listChannels(request, StreamObserverToSingle(it)) }
+        return Single.create<ListChannelsResponse> { asyncRpcStub.listChannels(request, StreamObserverToSingle(it)) }
     }
 
     override fun listClosedChannels(): Single<ClosedChannelsResponse> {
         val request = ClosedChannelsRequest.newBuilder().build()
 
-        return Single.create<ClosedChannelsResponse> { asyncStub.closedChannels(request, StreamObserverToSingle(it)) }
+        return Single.create<ClosedChannelsResponse> { asyncRpcStub.closedChannels(request, StreamObserverToSingle(it)) }
     }
 
     override fun listPendingChannels(): Single<PendingChannelsResponse> {
         val request = PendingChannelsRequest.newBuilder().build()
 
-        return Single.create<PendingChannelsResponse> { asyncStub.pendingChannels(request, StreamObserverToSingle(it)) }
+        return Single.create<PendingChannelsResponse> { asyncRpcStub.pendingChannels(request, StreamObserverToSingle(it)) }
     }
 
     override fun decodePayReq(req: String): Single<PayReq> {
@@ -91,7 +112,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setPayReq(req)
             .build()
 
-        return Single.create<PayReq> { asyncStub.decodePayReq(request, StreamObserverToSingle(it)) }
+        return Single.create<PayReq> { asyncRpcStub.decodePayReq(request, StreamObserverToSingle(it)) }
     }
 
     override fun payInvoice(invoice: String): Single<SendResponse> {
@@ -100,7 +121,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setPaymentRequest(invoice)
             .build()
 
-        return Single.create<SendResponse> { asyncStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
+        return Single.create<SendResponse> { asyncRpcStub.sendPaymentSync(request, StreamObserverToSingle(it)) }
     }
 
     override fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse> {
@@ -110,7 +131,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setMemo(memo)
             .build()
 
-        return Single.create<AddInvoiceResponse> { asyncStub.addInvoice(invoice, StreamObserverToSingle(it)) }
+        return Single.create<AddInvoiceResponse> { asyncRpcStub.addInvoice(invoice, StreamObserverToSingle(it)) }
     }
 
     override fun unlockWallet(password: String): Single<Unit> {
@@ -121,10 +142,18 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
         return walletUnlocker.startUnlock(password)
     }
 
+    override fun unlockWalletBlocking(password: String) {
+        unlockWallet(password)
+            .subscribe()
+            .let {
+                disposables.add(it)
+            }
+    }
+
     override fun listPayments(): Single<ListPaymentsResponse> {
         val request = ListPaymentsRequest.newBuilder().build()
 
-        return Single.create<ListPaymentsResponse> { asyncStub.listPayments(request, StreamObserverToSingle(it)) }
+        return Single.create<ListPaymentsResponse> { asyncRpcStub.listPayments(request, StreamObserverToSingle(it)) }
     }
 
     override fun listInvoices(
@@ -141,7 +170,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setReversed(reversed)
             .build()
 
-        return Single.create<ListInvoiceResponse> { asyncStub.listInvoices(request, StreamObserverToSingle(it)) }
+        return Single.create<ListInvoiceResponse> { asyncRpcStub.listInvoices(request, StreamObserverToSingle(it)) }
     }
 
     override fun getTransactions(): Single<TransactionDetails> {
@@ -149,7 +178,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .newBuilder()
             .build()
 
-        return Single.create<TransactionDetails> { asyncStub.getTransactions(request, StreamObserverToSingle(it)) }
+        return Single.create<TransactionDetails> { asyncRpcStub.getTransactions(request, StreamObserverToSingle(it)) }
     }
 
     override fun invoicesObservable(): Observable<Invoice> {
@@ -157,7 +186,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .newBuilder()
             .build()
 
-        return Observable.create<Invoice> { asyncStub.subscribeInvoices(request, StreamObserverToObserver(it)) }
+        return Observable.create<Invoice> { asyncRpcStub.subscribeInvoices(request, StreamObserverToObserver(it)) }
     }
 
     override fun channelsObservable(): Observable<ChannelEventUpdate> {
@@ -165,7 +194,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .newBuilder()
             .build()
 
-        return Observable.create<ChannelEventUpdate> { asyncStub.subscribeChannelEvents(channelEventSubscription, StreamObserverToObserver(it)) }
+        return Observable.create<ChannelEventUpdate> { asyncRpcStub.subscribeChannelEvents(channelEventSubscription, StreamObserverToObserver(it)) }
     }
 
     override fun transactionsObservable(): Observable<Transaction> {
@@ -173,7 +202,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .newBuilder()
             .build()
 
-        return Observable.create<Transaction> { asyncStub.subscribeTransactions(request, StreamObserverToObserver(it)) }
+        return Observable.create<Transaction> { asyncRpcStub.subscribeTransactions(request, StreamObserverToObserver(it)) }
     }
 
     override fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate> {
@@ -183,7 +212,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setLocalFundingAmount(amount)
             .build()
 
-        return Observable.create<OpenStatusUpdate> { asyncStub.openChannel(openChannelRequest, StreamObserverToObserver(it)) }
+        return Observable.create<OpenStatusUpdate> { asyncRpcStub.openChannel(openChannelRequest, StreamObserverToObserver(it)) }
     }
 
     override fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate> {
@@ -199,7 +228,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setForce(forceClose)
             .build()
 
-        return Observable.create<CloseStatusUpdate> { asyncStub.closeChannel(request, StreamObserverToObserver(it)) }
+        return Observable.create<CloseStatusUpdate> { asyncRpcStub.closeChannel(request, StreamObserverToObserver(it)) }
     }
 
     override fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse> {
@@ -214,7 +243,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setAddr(lightningAddress)
             .build()
 
-        return Single.create<ConnectPeerResponse> { asyncStub.connectPeer(request, StreamObserverToSingle(it)) }
+        return Single.create<ConnectPeerResponse> { asyncRpcStub.connectPeer(request, StreamObserverToSingle(it)) }
     }
 
     override fun getOnChainAddress(): Single<NewAddressResponse> {
@@ -222,7 +251,7 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
             .setType(AddressType.UNUSED_WITNESS_PUBKEY_HASH)
             .build()
 
-        return Single.create<NewAddressResponse> { asyncStub.newAddress(request, StreamObserverToSingle(it)) }
+        return Single.create<NewAddressResponse> { asyncRpcStub.newAddress(request, StreamObserverToSingle(it)) }
     }
 
     fun validateAsync(): Single<Unit> {
@@ -267,5 +296,21 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
 
             Unit
         }
+    }
+
+    override fun genSeed(): Single<GenSeedResponse> {
+        val request = GenSeedRequest.newBuilder().build()
+
+        return Single.create<GenSeedResponse> { asyncWalletUnlockerStub.genSeed(request, StreamObserverToSingle(it)) }
+    }
+
+    override fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse> {
+        val request = InitWalletRequest
+            .newBuilder()
+            .setWalletPassword(ByteString.copyFromUtf8(password))
+            .addAllCipherSeedMnemonic(mnemonicList)
+            .build()
+
+        return Single.create<InitWalletResponse> { asyncWalletUnlockerStub.initWallet(request, StreamObserverToSingle(it)) }
     }
 }

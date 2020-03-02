@@ -6,13 +6,16 @@ import io.horizontalsystems.lightningkit.demo.core.App
 
 object CreateWalletModule {
     interface IInteractor {
-        fun createWallet()
+        fun generateSeed()
+        fun initWallet(mnemonicList: List<String>)
         fun clear()
     }
 
     interface IInteractorDelegate {
-        fun onCreateWallet(mnemonicList: List<String>)
+        fun onSeedGenerated(mnemonicList: List<String>)
         fun onSeedGenerateError(throwable: Throwable)
+        fun onWalletInit()
+        fun onWalletInitError(throwable: Throwable)
     }
 
     class Factory : ViewModelProvider.Factory {

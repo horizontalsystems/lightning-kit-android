@@ -9,21 +9,32 @@ class CreateWalletInteractor(private val filesDir: String, private val storage: 
     lateinit var delegate: CreateWalletModule.IInteractorDelegate
     private val disposables = CompositeDisposable()
 
-    override fun createWallet() {
+    val lightningKit by lazy { LightningKit.local(filesDir) }
+
+    override fun generateSeed() {
+        lightningKit.genSeed()
+            .subscribe({
+                delegate.onSeedGenerated(it)
+            }, {
+                delegate.onSeedGenerateError(it)
+            })
+            .let {
+                disposables.add(it)
+            }
+    }
+
+    override fun initWallet(mnemonicList: List<String>) {
         val password = "somesuperstrongpw"
 
-        val lightningKit = LightningKit.local(filesDir)
-
-        lightningKit.create(password)
-            .doOnSuccess {
+        lightningKit.initWallet(mnemonicList, password)
+            .subscribe({
                 storage.saveLocalLndPassword(password)
 
                 App.lightningKit = lightningKit
-            }
-            .subscribe({
-                delegate.onCreateWallet(it)
+
+                delegate.onWalletInit()
             }, {
-                delegate.onSeedGenerateError(it)
+                delegate.onWalletInitError(it)
             })
             .let {
                 disposables.add(it)

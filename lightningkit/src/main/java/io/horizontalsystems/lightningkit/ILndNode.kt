@@ -27,6 +27,7 @@ interface ILndNode {
     }
 
     val statusObservable: Observable<Status>
+    val status: Status
 
     fun getInfo(): Single<GetInfoResponse>
     fun getWalletBalance(): Single<WalletBalanceResponse>
@@ -49,10 +50,13 @@ interface ILndNode {
     fun payInvoice(invoice: String): Single<SendResponse>
     fun addInvoice(amount: Long, memo: String): Single<AddInvoiceResponse>
     fun unlockWallet(password: String): Single<Unit>
+    fun unlockWalletBlocking(password: String)
     fun decodePayReq(req: String): Single<PayReq>
     fun openChannel(nodePubKey: String, amount: Long): Observable<OpenStatusUpdate>
     fun closeChannel(channelPoint: String, forceClose: Boolean): Observable<CloseStatusUpdate>
     fun connect(nodeAddress: String, nodePubKey: String): Single<ConnectPeerResponse>
     fun getOnChainAddress(): Single<NewAddressResponse>
     fun logout(): Single<Unit>
+    fun genSeed(): Single<GenSeedResponse>
+    fun initWallet(mnemonicList: List<String>, password: String): Single<InitWalletResponse>
 }

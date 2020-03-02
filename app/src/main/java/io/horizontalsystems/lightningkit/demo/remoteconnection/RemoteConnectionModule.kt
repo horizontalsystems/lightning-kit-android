@@ -8,7 +8,6 @@ import io.horizontalsystems.lightningkit.remote.RemoteLndCredentials
 object RemoteConnectionModule {
     interface IInteractor {
         fun validateConnection(remoteLndCredentials: RemoteLndCredentials)
-        fun saveRemoteLndCredentials(remoteLndCredentials: RemoteLndCredentials)
         fun clear()
     }
 
