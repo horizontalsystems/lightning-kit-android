@@ -20,9 +20,6 @@ class LocalLnd(filesDir: String) : ILndNode {
 
     init {
         start()
-            .doOnSuccess {
-                scheduleStatusUpdates()
-            }
             .doOnError {
                 status = ILndNode.Status.ERROR(it)
             }
@@ -32,11 +29,13 @@ class LocalLnd(filesDir: String) : ILndNode {
             }
     }
 
-    fun start(): Single<Unit> {
+    private fun start(): Single<Unit> {
         val args = "--bitcoin.active --bitcoin.node=neutrino --bitcoin.mainnet --routing.assumechanvalid --no-macaroons --lnddir=$lndDir"
 
         val rpcReady = object : Callback {
-            override fun onResponse(p0: ByteArray?) = Unit
+            override fun onResponse(p0: ByteArray?) {
+                scheduleStatusUpdates()
+            }
 
             override fun onError(p0: java.lang.Exception) {
                 status = ILndNode.Status.ERROR(p0)
@@ -48,14 +47,16 @@ class LocalLnd(filesDir: String) : ILndNode {
         }
     }
 
-    fun scheduleStatusUpdates() {
-        disposables.add(Observable.interval(1, TimeUnit.SECONDS)
+    private fun scheduleStatusUpdates() {
+        Observable.interval(1, TimeUnit.SECONDS)
             .flatMap {
                 fetchStatus().toObservable()
             }
             .subscribe {
                 status = it
-            })
+            }.let {
+                disposables.add(it)
+            }
     }
 
     private fun fetchStatus(): Single<ILndNode.Status> {

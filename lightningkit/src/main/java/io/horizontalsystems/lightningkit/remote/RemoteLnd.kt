@@ -60,14 +60,16 @@ class RemoteLnd(remoteLndCredentials: RemoteLndCredentials) : ILndNode {
         }
     }
 
-    fun scheduleStatusUpdates() {
-        disposables.add(Observable.interval(1, TimeUnit.SECONDS)
+    private fun scheduleStatusUpdates() {
+        Observable.interval(3, TimeUnit.SECONDS)
             .flatMap {
                 fetchStatus().toObservable()
             }
             .subscribe {
                 status = it
-            })
+            }.let {
+                disposables.add(it)
+            }
     }
 
     override fun getInfo(): Single<GetInfoResponse> {
